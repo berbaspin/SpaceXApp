@@ -14,16 +14,11 @@ final class FooterView: UICollectionReusableView {
         var config = UIButton.Configuration.filled()
         config.buttonSize = .medium
         config.cornerStyle = .medium
-        config.baseBackgroundColor = UIColor(
-            red: 33 / 255,
-            green: 33 / 255,
-            blue: 33 / 255,
-            alpha: 1
-        )
+        config.baseBackgroundColor = UIColor(named: "DarkGray")
         button.configuration = config
         let mySelectedAttributedTitle = NSAttributedString(
             string: "Посмотреть запуски",
-            attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)]
+            attributes: [.font: UIFont.boldSystemFont(ofSize: 18)]
         )
         button.setAttributedTitle(mySelectedAttributedTitle, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -34,7 +29,8 @@ final class FooterView: UICollectionReusableView {
         super.init(frame: frame)
         layer.cornerRadius = 25
         backgroundColor = .black
-        overlayFirstLayer()
+        setHierarchy()
+        setLayout()
     }
 
     @available(*, unavailable)
@@ -43,12 +39,14 @@ final class FooterView: UICollectionReusableView {
     }
 }
 
-// MARK: - Layout Constraints
+// MARK: - Setup Layout
 
 private extension FooterView {
-    private func overlayFirstLayer() {
+    func setHierarchy() {
         addSubview(launchesButton)
+    }
 
+    func setLayout() {
         NSLayoutConstraint.activate([
             launchesButton.topAnchor.constraint(equalTo: topAnchor),
             launchesButton.bottomAnchor.constraint(equalTo: bottomAnchor),

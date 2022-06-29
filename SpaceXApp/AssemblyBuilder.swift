@@ -8,24 +8,32 @@
 import UIKit
 
 protocol AssemblyBuilderProtocol {
-    func createMainModule() -> UIViewController
+    func createMainModule(router: RouterProtocol) -> UIViewController
     func createSettingsModule() -> UIViewController
-    func createLaunchesModule() -> UIViewController
+    func createLaunchesModule(rocketName: String, rocketId: String, router: RouterProtocol) -> UIViewController
 }
 
 final class AssemblyBuilder: AssemblyBuilderProtocol {
-    func createMainModule() -> UIViewController {
-        let controller = MainViewController()
-        return controller
+    func createMainModule(router: RouterProtocol) -> UIViewController {
+        let mainViewController = MainViewController()
+        let networkManager = NetworkManager()
+        let viewModel = MainViewModel(networkManager: networkManager, router: router)
+        mainViewController.viewModel = viewModel
+        return mainViewController
     }
 
     func createSettingsModule() -> UIViewController {
-        let controller = SettingsViewController()
-        return controller
+        let settingsViewController = SettingsViewController()
+        let viewModel = SettingsViewModel()
+        settingsViewController.viewModel = viewModel
+        return settingsViewController
     }
 
-    func createLaunchesModule() -> UIViewController {
-        let controller = LaunchesViewController()
-        return controller
+    func createLaunchesModule(rocketName: String, rocketId: String, router: RouterProtocol) -> UIViewController {
+        let launchesViewController = LaunchesViewController()
+        let networkManager = NetworkManager()
+        let viewModel = LaunchesViewModel(rocketName: rocketName, rocketId: rocketId, networkManager: networkManager)
+        launchesViewController.viewModel = viewModel
+        return launchesViewController
     }
 }

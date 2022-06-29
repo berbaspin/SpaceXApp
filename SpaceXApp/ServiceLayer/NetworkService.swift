@@ -1,5 +1,5 @@
 //
-//  NetworkManager.swift
+//  NetworkService.swift
 //  SpaceXApp
 //
 //  Created by Dmitry Babaev on 27.05.2022.
@@ -7,11 +7,12 @@
 
 import Moya
 
-enum NetworkManager {
+enum NetworkService {
     case getRockets
+    case getLaunches
 }
 
-extension NetworkManager: TargetType {
+extension NetworkService: TargetType {
     var baseURL: URL {
         URL(string: "https://api.spacexdata.com")!
     }
@@ -20,6 +21,8 @@ extension NetworkManager: TargetType {
         switch self {
         case .getRockets:
             return "/v4/rockets"
+        case .getLaunches:
+            return "/v4/launches"
         }
     }
 
@@ -27,7 +30,7 @@ extension NetworkManager: TargetType {
         .get
     }
 
-    var data: Data {
+    var sampleData: Data {
         Data()
     }
 
@@ -35,12 +38,8 @@ extension NetworkManager: TargetType {
         .requestPlain
     }
 
-    var headers: [String : String]? {
+    var headers: [String: String]? {
         ["Content-Type": "application/json"]
-    }
-
-    var validationType: ValidationType {
-        .successCodes
     }
 
 }

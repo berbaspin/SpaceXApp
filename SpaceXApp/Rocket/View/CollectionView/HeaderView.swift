@@ -34,12 +34,7 @@ final class HeaderView: UICollectionReusableView {
             systemName: "gearshape",
             withConfiguration: UIImage.SymbolConfiguration(scale: .large)
         )?.withTintColor(
-            UIColor(
-                red: 202 / 255,
-                green: 202 / 255,
-                blue: 202 / 255,
-                alpha: 1
-            ),
+            UIColor(named: "LightGray") ?? UIColor.lightGray,
             renderingMode: .alwaysOriginal
         )
         button.setImage(image, for: .normal)
@@ -51,11 +46,11 @@ final class HeaderView: UICollectionReusableView {
         super.init(frame: frame)
         layer.cornerRadius = 25
         backgroundColor = .black
-        overlayFirstLayer()
-        overlaySecondLayer()
+        setHierarchy()
+        setLayout()
     }
 
-    func configure(with title: String) {
+    func setup(with title: String) {
         titleLabel.text = title
     }
 
@@ -65,26 +60,25 @@ final class HeaderView: UICollectionReusableView {
     }
 }
 
-// MARK: - Layout Constraints
+// MARK: - Setup Layout
 
 private extension HeaderView {
-    func overlaySecondLayer() {
-        stackView.addArrangedSubview(titleLabel)
-        stackView.addArrangedSubview(settingsButton)
-
-        NSLayoutConstraint.activate([
-            settingsButton.widthAnchor.constraint(equalToConstant: 30)
-        ])
-    }
-
-    private func overlayFirstLayer() {
+    func setHierarchy() {
         addSubview(stackView)
 
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(settingsButton)
+    }
+
+    func setLayout() {
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 40),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -25),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15)
+        ])
+        NSLayoutConstraint.activate([
+            settingsButton.widthAnchor.constraint(equalToConstant: 30)
         ])
     }
 }

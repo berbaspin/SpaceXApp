@@ -1,14 +1,15 @@
 //
-//  RocketView.swift
+//  RocketViewController.swift
 //  SpaceXApp
 //
 //  Created by Dmitry Babaev on 08.06.2022.
 //
 
 import UIKit
+import RxCocoa
 import RxSwift
 
-final class RocketView: UIView {
+final class RocketViewController: UIViewController {
 
     private let rocketImage: UIImageView = {
         let imageView = UIImageView()
@@ -39,37 +40,37 @@ final class RocketView: UIView {
         case secondStage = "ВТОРАЯ СТУПЕНЬ"
     }
 
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Cell>! = nil
+    private var dataSource: UICollectionViewDiffableDataSource<Section, RocketCellModel>! = nil
     private let sections = Section.allCases
-    private var viewController: UIViewController?
+    private let viewModel: RocketViewModel
+    private let disposeBag = DisposeBag()
+    let pageIndex: Int
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        overlayFirstLayout()
+    init(viewModel: RocketViewModel, pageIndex: Int, image: UIImage?) {
+        self.viewModel = viewModel
+        self.pageIndex = pageIndex
+        rocketImage.image = image
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setHierarchy()
+        setLayout()
         setupCollectionView()
         createDataSource()
     }
 
-    func configure(viewController: UIViewController, image: UIImage?) {
-        self.viewController = viewController
-        rocketImage.image = image
-    }
-
     private func setupCollectionView() {
         collectionView.collectionViewLayout = createCompositionalLayout()
-        collectionView.register(
-            ParametersCell.self,
-            forCellWithReuseIdentifier: String(describing: ParametersCell.self)
-        )
-        collectionView.register(
-            InformationCell.self,
-            forCellWithReuseIdentifier: String(describing: InformationCell.self)
-        )
-        collectionView.register(
-            StageCell.self,
-            forCellWithReuseIdentifier: String(describing: StageCell.self)
-        )
-
+        collectionView.registerCell(type: ParametersCell.self)
+        collectionView.registerCell(type: InformationCell.self)
+        collectionView.registerCell(type: StageCell.self)
         collectionView.register(
             SectionHeaderView.self,
             forSupplementaryViewOfKind: Syplementary.sectionHeader.rawValue,
@@ -86,87 +87,59 @@ final class RocketView: UIView {
             withReuseIdentifier: String(describing: FooterView.self)
         )
     }
-
-    // TODO(Move to Router)
-    @objc
-    private func showLaunches() {
-        let launchesViewController = LaunchesViewController()
-        viewController?.show(launchesViewController, sender: self)
-    }
-
-    // TODO(Move to Router)
-    @objc
-    private func showSettings() {
-        let settingsViewController = SettingsViewController()
-        settingsViewController.modalPresentationStyle = .automatic
-        viewController?.present(settingsViewController, animated: true)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
-// MARK: - Layout Constraints
+// MARK: - Setup Layout
 
-private extension RocketView {
-
-    func overlayFirstLayout() {
-        addSubview(rocketImage)
-        addSubview(collectionView)
-
-        NSLayoutConstraint.activate([
-            rocketImage.topAnchor.constraint(equalTo: topAnchor),
-            rocketImage.leadingAnchor.constraint(equalTo: leadingAnchor),
-            rocketImage.trailingAnchor.constraint(equalTo: trailingAnchor),
-            rocketImage.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1 / 3),
-
-            collectionView.topAnchor.constraint(equalTo: rocketImage.bottomAnchor, constant: -25),
-            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+private extension RocketViewController {
+    func setHierarchy() {
+        view.addSubview(rocketImage)
+        view.addSubview(collectionView)
     }
 
+    func setLayout() {
+        NSLayoutConstraint.activate([
+            rocketImage.topAnchor.constraint(equalTo: view.topAnchor),
+            rocketImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            rocketImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            rocketImage.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1 / 3),
+
+            collectionView.topAnchor.constraint(equalTo: rocketImage.bottomAnchor, constant: -25),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
 }
 
 // MARK: - UICollectionView
 
-private extension RocketView {
+private extension RocketViewController {
     func createDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, Cell>(
+        dataSource = UICollectionViewDiffableDataSource<Section, RocketCellModel>(
             collectionView: collectionView) { collectionView, indexPath, cellData -> UICollectionViewCell? in
 
                 // TODO(make shorter)
                 switch self.sections[indexPath.section] {
                 case .parameters:
-                    let cell = collectionView.dequeueReusableCell(
-                        withReuseIdentifier: String(describing: ParametersCell.self),
-                        for: indexPath
+                    let cell = collectionView.dequeueCell(
+                        type: ParametersCell.self, for: indexPath
                     ) as? ParametersCell
-                    cell?.configure(with: cellData)
+                    cell?.setup(with: cellData)
                     return cell
                 case .information:
-                    let cell = collectionView.dequeueReusableCell(
-                        withReuseIdentifier: String(describing: InformationCell.self),
-                        for: indexPath
+                    let cell = collectionView.dequeueCell(
+                        type: InformationCell.self, for: indexPath
                     ) as? InformationCell
-                    cell?.configure(with: cellData)
+                    cell?.setup(with: cellData)
                     return cell
                 case .firstStage:
-                    let cell = collectionView.dequeueReusableCell(
-                        withReuseIdentifier: String(describing: StageCell.self),
-                        for: indexPath
-                    ) as? StageCell
-                    cell?.configure(with: cellData)
+                    let cell = collectionView.dequeueCell(type: StageCell.self, for: indexPath) as? StageCell
+                    cell?.setup(with: cellData)
                     return cell
                 case .secondStage:
-                    let cell = collectionView.dequeueReusableCell(
-                        withReuseIdentifier: String(describing: StageCell.self),
-                        for: indexPath
-                    ) as? StageCell
-                    cell?.configure(with: cellData)
+                    let cell = collectionView.dequeueCell(type: StageCell.self, for: indexPath) as? StageCell
+                    cell?.setup(with: cellData)
                     return cell
                 }
         }
@@ -181,12 +154,16 @@ private extension RocketView {
                     withReuseIdentifier: String(describing: HeaderView.self),
                     for: indexPath
                 ) as? HeaderView
-                supplementaryView?.configure(with: "Falcon Heavy")
-                supplementaryView?.settingsButton.addTarget(
-                    self,
-                    action: #selector(self.showSettings),
-                    for: .touchUpInside
-                )
+                supplementaryView?.setup(with: self.viewModel.rocket.name)
+
+                supplementaryView?.settingsButton.rx
+                    .tap
+                    .bind { [weak self] in
+                        print("Нажал settingsButton")
+                        self?.viewModel.tapOnSettings()
+                        // self?.showSettingsVC()
+                    }
+                    .disposed(by: self.disposeBag)
                 return supplementaryView
             case Syplementary.globalFooter.rawValue:
                 let supplementaryView = collectionView.dequeueReusableSupplementaryView(
@@ -194,11 +171,15 @@ private extension RocketView {
                     withReuseIdentifier: String(describing: FooterView.self),
                     for: indexPath
                 ) as? FooterView
-                supplementaryView?.launchesButton.addTarget(
-                    self,
-                    action: #selector(self.showLaunches),
-                    for: .touchUpInside
-                )
+
+                supplementaryView?.launchesButton.rx
+                    .tap
+                    .bind { [weak self] in
+                        print("Нажал launchesButton")
+                        self?.viewModel.tapOnLaunches()
+                    }
+                    .disposed(by: self.disposeBag)
+
                 return supplementaryView
             default:
                 let supplementaryView = collectionView.dequeueReusableSupplementaryView(
@@ -206,7 +187,7 @@ private extension RocketView {
                     withReuseIdentifier: String(describing: SectionHeaderView.self),
                     for: indexPath
                 ) as? SectionHeaderView
-                supplementaryView?.configure(with: Section.allCases[indexPath.section].rawValue)
+                supplementaryView?.setup(with: Section.allCases[indexPath.section].rawValue)
                 return supplementaryView
             }
         }
@@ -215,6 +196,12 @@ private extension RocketView {
         dataSource.apply(snapshot)
     }
 
+    private func showSettingsVC() {
+        let settingsViewController = AssemblyBuilder().createSettingsModule()
+        let navController = UINavigationController(rootViewController: settingsViewController)
+        navController.modalPresentationStyle = .automatic
+        present(navController, animated: true)
+    }
     func createCompositionalLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, _ in
             let section = self.sections[sectionIndex]
@@ -258,39 +245,30 @@ private extension RocketView {
         return layout
     }
 
-    private func snapshotForCurrentState() -> NSDiffableDataSourceSnapshot<Section, Cell> {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Cell>()
+    private func snapshotForCurrentState() -> NSDiffableDataSourceSnapshot<Section, RocketCellModel> {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, RocketCellModel>()
         snapshot.appendSections(sections)
 
         // TODO(change data getting)
         let parameters = [
-            Cell(title: "Высота, ft", value: "229.6", measuringSystem: "ft"),
-            Cell(title: "Диаметр, ft", value: "39.9", measuringSystem: "ft"),
-            Cell(title: "Масса, lb", value: "3,125,735", measuringSystem: "lb"),
-            Cell(title: "Нагрузка, lb", value: "140,660", measuringSystem: "lb")
+            RocketCellModel(title: "Высота, ft", value: "229.6", measuringSystem: "ft"),
+            RocketCellModel(title: "Диаметр, ft", value: "39.9", measuringSystem: "ft"),
+            RocketCellModel(title: "Масса, lb", value: "3,125,735", measuringSystem: "lb"),
+            RocketCellModel(title: "Нагрузка, lb", value: "140,660", measuringSystem: "lb")
         ]
 
         let information = [
-            Cell(title: "Первый запуск", value: "7 февраля, 2018", measuringSystem: ""),
-            Cell(title: "Страна", value: "США", measuringSystem: ""),
-            Cell(title: "Стоимость запуска", value: "$90 млн", measuringSystem: "$")
+            RocketCellModel(title: "Первый запуск", value: "7 февраля, 2018", measuringSystem: ""),
+            RocketCellModel(title: "Страна", value: "США", measuringSystem: ""),
+            RocketCellModel(title: "Стоимость запуска", value: "$90 млн", measuringSystem: "$")
         ]
 
-        let firstStage = [
-            Cell(title: "Количество двигателей", value: "27", measuringSystem: ""),
-            Cell(title: "Количество топлива", value: "308,6", measuringSystem: "ton"),
-            Cell(title: "Время сгорания", value: "593", measuringSystem: "sec")
-        ]
-
-        let secondStage = [
-            Cell(title: "Количество двигателей", value: "1", measuringSystem: ""),
-            Cell(title: "Количество топлива", value: "243,2", measuringSystem: "ton"),
-            Cell(title: "Время сгорания", value: "397", measuringSystem: "sec")
-        ]
+        // let firstStage = viewModel.getFirstStage()
+        let secondStage = viewModel.getSecondStage()
 
         snapshot.appendItems(parameters, toSection: Section.parameters)
         snapshot.appendItems(information, toSection: Section.information)
-        snapshot.appendItems(firstStage, toSection: Section.firstStage)
+        // snapshot.appendItems(firstStage, toSection: Section.firstStage)
         snapshot.appendItems(secondStage, toSection: Section.secondStage)
 
         return snapshot
@@ -299,7 +277,7 @@ private extension RocketView {
 
 // MARK: - UICollectionView Sections
 
-private extension RocketView {
+private extension RocketViewController {
     func createParametersSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),

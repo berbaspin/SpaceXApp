@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 final class SettingsTableViewCell: UITableViewCell {
     private let stack: UIStackView = {
@@ -28,23 +30,13 @@ final class SettingsTableViewCell: UITableViewCell {
     private let segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        segmentedControl.backgroundColor = UIColor(red: 33 / 255, green: 33 / 255, blue: 33 / 255, alpha: 1)
-        segmentedControl.setTitleTextAttributes([
-            NSAttributedString.Key.foregroundColor: UIColor(
-                red: 142 / 255,
-                green: 142 / 255,
-                blue: 143 / 255,
-                alpha: 1
-            )],
+        segmentedControl.backgroundColor = UIColor(named: "DarkGray")
+        segmentedControl.setTitleTextAttributes(
+            [.foregroundColor: UIColor(named: "Gray") ?? UIColor.darkGray],
             for: .normal
         )
-        segmentedControl.setTitleTextAttributes([
-            NSAttributedString.Key.foregroundColor: UIColor(
-                red: 18 / 255,
-                green: 18 / 255,
-                blue: 18 / 255,
-                alpha: 1
-            )],
+        segmentedControl.setTitleTextAttributes(
+            [.foregroundColor: UIColor(named: "Black") ?? UIColor.black],
             for: .selected
         )
         return segmentedControl
@@ -54,15 +46,26 @@ final class SettingsTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .black
         selectionStyle = .none
-        overlayFirstLayer()
-        overlaySecondLayer()
+        setHierarchy()
+        setLayout()
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        segmentedControl.removeAllSegments()
     }
 
     func setup(text: String, items: [String]) {
-        segmentedControl.addTarget(self, action: #selector(segmentedValueChanged(_:)), for: .valueChanged)
+        segmentedControl
+            .rx
+            .selectedSegmentIndex
+            .subscribe(onNext: { index in
+                print(index)
+            })
+        // segmentedControl.addTarget(self, action: #selector(segmentedValueChanged(_:)), for: .valueChanged)
         label.text = text
         for index in 0 ..< items.count {
-            segmentedControl.insertSegment(withTitle: items[index], at: index, animated: true)
+            segmentedControl.insertSegment(withTitle: items[index], at: index, animated: false)
         }
         segmentedControl.selectedSegmentIndex = 0
     }
@@ -78,21 +81,17 @@ final class SettingsTableViewCell: UITableViewCell {
     }
 }
 
-// MARK: - Layout Constraints
+// MARK: - Setup Layout
 
 private extension SettingsTableViewCell {
-    private func overlaySecondLayer() {
-        stack.addArrangedSubview(label)
-        stack.addArrangedSubview(segmentedControl)
-
-        NSLayoutConstraint.activate([
-            segmentedControl.widthAnchor.constraint(equalToConstant: 120)
-        ])
-    }
-
-    private func overlayFirstLayer() {
+    func setHierarchy() {
         contentView.addSubview(stack)
 
+        stack.addArrangedSubview(label)
+        stack.addArrangedSubview(segmentedControl)
+    }
+
+    func setLayout() {
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
@@ -100,5 +99,8 @@ private extension SettingsTableViewCell {
             stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30)
         ])
 
+        NSLayoutConstraint.activate([
+            segmentedControl.widthAnchor.constraint(equalToConstant: 120)
+        ])
     }
 }

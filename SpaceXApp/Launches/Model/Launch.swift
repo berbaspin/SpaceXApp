@@ -12,11 +12,13 @@ struct Launch {
     let date: String
     let result: Bool
 
-    static func getLaunches() -> [Launch] {
-        [
-            Launch(name: "FalconSat", date: "2 февраля, 2022", result: true),
-            Launch(name: "Heavy holidays", date: "2 февраля, 2022", result: true),
-            Launch(name: "CRS-24 Mission", date: "2 февраля, 2022", result: false)
-        ]
+    init(launch: LaunchWrapped) {
+        self.name = launch.name
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM, yyyy"
+        self.date = dateFormatter.string(
+            from: Date(timeIntervalSince1970: Double(launch.staticFireDateUnix ?? 415_637_900))
+        )
+        self.result = launch.success ?? false
     }
 }

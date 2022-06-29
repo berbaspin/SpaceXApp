@@ -10,7 +10,7 @@ import UIKit
 protocol RouterProtocol {
     func initializeViewController()
     func showSettings()
-    func showLaunches()
+    func showLaunches(rocketName: String, rocketId: String)
 }
 
 final class Router: RouterProtocol {
@@ -24,15 +24,24 @@ final class Router: RouterProtocol {
     }
 
     func initializeViewController() {
-        let mainViewController = assemblyBuilder.createMainModule()
+        let mainViewController = assemblyBuilder.createMainModule(router: self)
         navigationController.viewControllers = [mainViewController]
     }
 
     func showSettings() {
+        let settingsViewController = assemblyBuilder.createSettingsModule()
+        let settingNavigationController = UINavigationController(rootViewController: settingsViewController)
+        settingNavigationController.modalPresentationStyle = .automatic
+        navigationController.topViewController?.present(settingNavigationController, animated: true)
     }
 
-    func showLaunches() {
-        let launchesViewController = assemblyBuilder.createLaunchesModule()
+    func showLaunches(rocketName: String, rocketId: String) {
+        let launchesViewController = assemblyBuilder.createLaunchesModule(
+            rocketName: rocketName,
+            rocketId: rocketId,
+            router: self
+        )
+        // print("showLaunches: \(navigationController.topViewController)")
         navigationController.pushViewController(launchesViewController, animated: true)
     }
 }

@@ -29,12 +29,7 @@ final class ParametersCell: UICollectionViewCell {
 
     private let paramenterNameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(
-            red: 142 / 255,
-            green: 142 / 255,
-            blue: 143 / 255,
-            alpha: 1
-        )
+        label.textColor = UIColor(named: "Gray")
         label.font = .systemFont(ofSize: 15)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -43,18 +38,13 @@ final class ParametersCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         clipsToBounds = true
-        backgroundColor = UIColor(
-            red: 33 / 255,
-            green: 33 / 255,
-            blue: 33 / 255,
-            alpha: 1
-        )
+        backgroundColor = UIColor(named: "DarkGray")
         layer.cornerRadius = 30
-        overlayFirstLayer()
-        overlaySecondLayer()
+        setHierarchy()
+        setLayout()
     }
 
-    func configure(with parameters: Cell) {
+    func setup(with parameters: RocketCellModel) {
         paramenterNameLabel.text = parameters.title
         paramenterValueLabel.text = parameters.value
     }
@@ -65,20 +55,20 @@ final class ParametersCell: UICollectionViewCell {
     }
 }
 
-// MARK: - Layout Constraints
+// MARK: - Setup Layout
 
 private extension ParametersCell {
-    private func overlaySecondLayer() {
+    func setHierarchy() {
+        contentView.addSubview(stackView)
+
         stackView.addArrangedSubview(paramenterValueLabel)
         stackView.addArrangedSubview(paramenterNameLabel)
     }
 
-    private func overlayFirstLayer() {
-        contentView.addSubview(stackView)
-
+    func setLayout() {
         NSLayoutConstraint.activate([
-                stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-                stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
 }

@@ -6,3 +6,15 @@
 //
 
 import Foundation
+import RxSwift
+
+protocol SettingsViewModelProtocol {
+    var dataSource: Observable<[Setting]> { get }
+
+}
+
+final class SettingsViewModel: SettingsViewModelProtocol {
+    let dataSource = Observable.of(Setting.availableSettings())
+
+    init() {}
+}

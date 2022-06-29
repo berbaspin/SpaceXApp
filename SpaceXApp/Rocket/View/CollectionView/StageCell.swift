@@ -22,12 +22,7 @@ final class StageCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.textColor = UIColor(
-            red: 202 / 255,
-            green: 202 / 255,
-            blue: 202 / 255,
-            alpha: 1
-        )
+        label.textColor = UIColor(named: "LightGray")
         return label
     }()
 
@@ -43,25 +38,20 @@ final class StageCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .white
         label.font = .boldSystemFont(ofSize: 16)
-        label.textColor = UIColor(
-            red: 142 / 255,
-            green: 142 / 255,
-            blue: 143 / 255,
-            alpha: 1
-        )
+        label.textColor = UIColor(named: "Gray")
         return label
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        overlayFirstLayer()
-        overlaySecondLayer()
+        setHierarchy()
+        setLayout()
     }
 
-    func configure(with parameters: Cell) {
-        titleLabel.text = parameters.title
-        valueLabel.text = parameters.value
-        measuringSystemLabel.text = parameters.measuringSystem
+    func setup(with cellModel: RocketCellModel) {
+        titleLabel.text = cellModel.title
+        valueLabel.text = cellModel.value
+        measuringSystemLabel.text = cellModel.measuringSystem
     }
 
     @available(*, unavailable)
@@ -70,28 +60,28 @@ final class StageCell: UICollectionViewCell {
     }
 }
 
-// MARK: - Layout Constraints
+// MARK: - Setup Layout
 
 private extension StageCell {
-    func overlaySecondLayer() {
+    func setHierarchy() {
+        contentView.addSubview(stackView)
+
         stackView.addArrangedSubview(titleLabel)
         stackView.addArrangedSubview(valueLabel)
         stackView.addArrangedSubview(measuringSystemLabel)
-
-        NSLayoutConstraint.activate([
-            valueLabel.widthAnchor.constraint(equalToConstant: 50),
-            measuringSystemLabel.widthAnchor.constraint(equalToConstant: 30)
-        ])
     }
 
-    func overlayFirstLayer() {
-        contentView.addSubview(stackView)
+    func setLayout() {
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        ])
 
         NSLayoutConstraint.activate([
-                stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+            valueLabel.widthAnchor.constraint(equalToConstant: 60),
+            measuringSystemLabel.widthAnchor.constraint(equalToConstant: 30)
         ])
     }
 }

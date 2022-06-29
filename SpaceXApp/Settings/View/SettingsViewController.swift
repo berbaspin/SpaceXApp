@@ -6,25 +6,10 @@
 //
 
 import UIKit
+import RxCocoa
+import RxSwift
 
 final class SettingsViewController: UIViewController {
-
-    private let navigationBar: UINavigationBar = {
-        let navigationBar = UINavigationBar()
-        navigationBar.barStyle = UIBarStyle.black
-        navigationBar.isTranslucent = false
-        navigationBar.tintColor = .white
-        let titleItem = UINavigationItem(title: "Настройки")
-        let doneItem = UIBarButtonItem(
-            barButtonSystemItem: .done,
-            target: nil,
-            action: #selector(closeViewController)
-        )
-        titleItem.rightBarButtonItem = doneItem
-        navigationBar.translatesAutoresizingMaskIntoConstraints = false
-        navigationBar.setItems([titleItem], animated: false)
-        return navigationBar
-    }()
 
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -33,75 +18,79 @@ final class SettingsViewController: UIViewController {
     }()
 
     private let settings = Setting.availableSettings()
+    private let disposeBag = DisposeBag()
+
+    // swiftlint:disable:next implicitly_unwrapped_optional
+    var viewModel: SettingsViewModelProtocol!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        overlayFirstLayer()
-        configureTableView()
+        setHierarchy()
+        setLayout()
+        bind()
+        setupNavigationBar()
+        setupTableView()
         view.backgroundColor = .black
+    }
+
+    private func bind() {
+        viewModel.dataSource
+            .bind(
+                to: tableView
+                    .rx
+                    .items(
+                    cellIdentifier: String(describing: SettingsTableViewCell.self),
+                    cellType: SettingsTableViewCell.self
+                )
+            ) { _, model, cell in
+                cell.setup(text: model.type, items: model.units)
+            }
+            .disposed(by: disposeBag)
     }
 }
 
 // MARK: - Setup Methods
 
 private extension SettingsViewController {
-    private func configureTableView() {
-        tableView.register(
-            SettingsTableViewCell.self,
-            forCellReuseIdentifier: String(describing: SettingsTableViewCell.self)
+
+    func setupNavigationBar() {
+        navigationController?.navigationBar.barStyle = .black
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.topItem?.title = "Настройки"
+        let doneItem = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: self,
+            action: #selector(closeViewController)
         )
+        navigationController?.navigationBar.topItem?.rightBarButtonItem = doneItem
+    }
+
+    func setupTableView() {
+        tableView.registerCell(type: SettingsTableViewCell.self)
+        tableView.rowHeight = 70
         tableView.backgroundColor = .black
-        tableView.dataSource = self
-        tableView.delegate = self
     }
 
     @objc
-    private func closeViewController() {
-        navigationController?.popViewController(animated: true)
+    func closeViewController() {
+        // navigationController?.popViewController(animated: true)
         dismiss(animated: true)
     }
 }
 
-// MARK: - Layout Constraints
+// MARK: - Setup Layout
 
 private extension SettingsViewController {
-    private func overlayFirstLayer() {
-        view.addSubview(navigationBar)
+    func setHierarchy() {
         view.addSubview(tableView)
+    }
 
+    func setLayout() {
         NSLayoutConstraint.activate([
-            navigationBar.topAnchor.constraint(equalTo: view.topAnchor),
-            navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navigationBar.heightAnchor.constraint(equalToConstant: 44),
-
-            tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 50),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
-    }
-}
-
-// MARK: - UITableViewDataSource, UITableViewDelegate
-
-extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        settings.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: String(describing: SettingsTableViewCell.self),
-            for: indexPath
-        ) as? SettingsTableViewCell
-
-        cell?.setup(text: settings[indexPath.row].type, items: settings[indexPath.row].units)
-
-        return cell ?? UITableViewCell()
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        70
     }
 }

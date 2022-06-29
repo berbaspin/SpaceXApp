@@ -22,8 +22,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         let navigationController = UINavigationController()
+        navigationController.navigationBar.barTintColor = .black
         navigationController.navigationBar.tintColor = .white
-        navigationController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+
         let assemblyBuilder = AssemblyBuilder()
         let router = Router(assemblyBuilder: assemblyBuilder, navigationController: navigationController)
         router.initializeViewController()

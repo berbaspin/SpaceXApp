@@ -22,12 +22,7 @@ final class InformationCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.textColor = UIColor(
-            red: 202 / 255,
-            green: 202 / 255,
-            blue: 202 / 255,
-            alpha: 1
-        )
+        label.textColor = UIColor(named: "LightGray")
         return label
     }()
 
@@ -40,13 +35,13 @@ final class InformationCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        overlayFirstLayer()
-        overlaySecondLayer()
+        setHierarchy()
+        setLayout()
     }
 
-    func configure(with parameters: Cell) {
-        titleLabel.text = parameters.title
-        valueLabel.text = parameters.value
+    func setup(with cellModel: RocketCellModel) {
+        titleLabel.text = cellModel.title
+        valueLabel.text = cellModel.value
     }
 
     @available(*, unavailable)
@@ -55,22 +50,22 @@ final class InformationCell: UICollectionViewCell {
     }
 }
 
-// MARK: - Layout Constraints
+// MARK: - Setup Layout
 
 private extension InformationCell {
-    private func overlaySecondLayer() {
+    func setHierarchy() {
+        contentView.addSubview(stackView)
+
         stackView.addArrangedSubview(titleLabel)
         stackView.addArrangedSubview(valueLabel)
     }
 
-    private func overlayFirstLayer() {
-        contentView.addSubview(stackView)
-
+    func setLayout() {
         NSLayoutConstraint.activate([
-                stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }
 }

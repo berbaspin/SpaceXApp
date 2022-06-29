@@ -19,10 +19,11 @@ final class SectionHeaderView: UICollectionReusableView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        overlayFirstLayer()
+        setHierarchy()
+        setLayout()
     }
 
-    func configure(with title: String) {
+    func setup(with title: String) {
         label.text = title
     }
 
@@ -32,12 +33,14 @@ final class SectionHeaderView: UICollectionReusableView {
     }
 }
 
-// MARK: - Layout Constraints
+// MARK: - Setup Layout
 
 private extension SectionHeaderView {
-    func overlayFirstLayer() {
+    func setHierarchy() {
         addSubview(label)
+    }
 
+    func setLayout() {
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: leadingAnchor),
             label.trailingAnchor.constraint(equalTo: trailingAnchor),
