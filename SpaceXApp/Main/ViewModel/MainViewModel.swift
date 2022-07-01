@@ -5,8 +5,8 @@
 //  Created by Dmitry Babaev on 07.06.2022.
 //
 
-import RxSwift
 import RxCocoa
+import RxSwift
 
 protocol MainViewModelProtocol {
     var dataSourse: Driver<[RocketViewModel]> { get }
@@ -26,7 +26,7 @@ final class MainViewModel: MainViewModelProtocol {
         dataSourse = networkManager.getRockets()
             .map { rockets -> [RocketViewModel] in
                 rockets.map { rocket in
-                    RocketViewModel(rocket: rocket, router: router)
+                    RocketViewModel(rocket: rocket, networkManager: networkManager, router: router)
                 }
             }
             .asDriver(onErrorDriveWith: .never())

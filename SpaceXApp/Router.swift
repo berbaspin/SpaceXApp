@@ -41,7 +41,6 @@ final class Router: RouterProtocol {
             rocketId: rocketId,
             router: self
         )
-        // print("showLaunches: \(navigationController.topViewController)")
         navigationController.pushViewController(launchesViewController, animated: true)
     }
 }

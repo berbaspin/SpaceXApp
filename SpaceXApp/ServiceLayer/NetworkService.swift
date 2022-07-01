@@ -10,11 +10,21 @@ import Moya
 enum NetworkService {
     case getRockets
     case getLaunches
+    case getImage(urlString: String)
 }
 
 extension NetworkService: TargetType {
+
+    // FIXME: Force unwrapping
     var baseURL: URL {
-        URL(string: "https://api.spacexdata.com")!
+        switch self {
+        case .getRockets:
+            return URL(string: "https://api.spacexdata.com")!
+        case .getLaunches:
+            return URL(string: "https://api.spacexdata.com")!
+        case .getImage(urlString: let urlString):
+            return URL(string: urlString)!
+        }
     }
 
     var path: String {
@@ -23,6 +33,8 @@ extension NetworkService: TargetType {
             return "/v4/rockets"
         case .getLaunches:
             return "/v4/launches"
+        case .getImage:
+            return ""
         }
     }
 

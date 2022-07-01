@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LaunchWrapped: Codable {
+struct Launch: Codable {
     let name: String
     let staticFireDateUnix: Int?
     let success: Bool?

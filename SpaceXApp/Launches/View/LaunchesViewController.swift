@@ -5,9 +5,9 @@
 //  Created by Dmitry Babaev on 31.05.2022.
 //
 
-import UIKit
 import RxCocoa
 import RxSwift
+import UIKit
 
 final class LaunchesViewController: UIViewController {
 

@@ -8,16 +8,30 @@
 import Foundation
 
 struct Setting {
+    let type: SettingsType
+    let units: [Units]
+    let isUS: Bool
+}
 
-    let type: String
-    let units: [String]
-
-    static func availableSettings() -> [Setting] {
-        [
-            Setting(type: "Высота", units: ["m", "ft"]),
-            Setting(type: "Диаметр", units: ["m", "ft"]),
-            Setting(type: "Масса", units: ["kg", "lb"]),
-            Setting(type: "Полезная нагрузка", units: ["kg", "lb"])
-        ]
+extension Setting {
+    enum SettingsType: String {
+        case height = "Height"
+        case diameter = "Diameter"
+        case mass = "Mass"
+        case payloadWeights = "Payload weights"
     }
+
+    enum Units: String {
+        case meters = "m"
+        case feet = "ft"
+        case kilogram = "kg"
+        case pound = "lb"
+    }
+
+    static func availableSettings() -> [Setting] {[
+        Setting(type: .height, units: [.meters, .feet], isUS: true),
+        Setting(type: .diameter, units: [.meters, .feet], isUS: true),
+        Setting(type: .mass, units: [.kilogram, .pound], isUS: true),
+        Setting(type: .payloadWeights, units: [.kilogram, .pound], isUS: true)
+    ]}
 }

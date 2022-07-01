@@ -9,6 +9,7 @@ target 'SpaceXApp' do
   pod 'Moya/RxSwift', '~> 15.0'
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
+  pod 'SwiftLint'
 
   target 'SpaceXAppTests' do
     inherit! :search_paths

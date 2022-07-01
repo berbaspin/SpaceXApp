@@ -5,11 +5,15 @@
 //  Created by Dmitry Babaev on 30.05.2022.
 //
 
-import UIKit
-import RxSwift
 import RxCocoa
+import RxSwift
+import UIKit
 
 final class SettingsTableViewCell: UITableViewCell {
+
+    // TODO: add UserDefaults to segmentedControl
+    // TODO: add segmentedContol functionality
+
     private let stack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -42,6 +46,8 @@ final class SettingsTableViewCell: UITableViewCell {
         return segmentedControl
     }()
 
+    private let disposeBag = DisposeBag()
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .black
@@ -55,24 +61,19 @@ final class SettingsTableViewCell: UITableViewCell {
         segmentedControl.removeAllSegments()
     }
 
-    func setup(text: String, items: [String]) {
+    func setup(text: String, items: [Setting.Units]) {
+        label.text = text
+        for index in 0 ..< items.count {
+            segmentedControl.insertSegment(withTitle: items[index].rawValue, at: index, animated: false)
+        }
+        segmentedControl.selectedSegmentIndex = 0
         segmentedControl
             .rx
             .selectedSegmentIndex
             .subscribe(onNext: { index in
                 print(index)
             })
-        // segmentedControl.addTarget(self, action: #selector(segmentedValueChanged(_:)), for: .valueChanged)
-        label.text = text
-        for index in 0 ..< items.count {
-            segmentedControl.insertSegment(withTitle: items[index], at: index, animated: false)
-        }
-        segmentedControl.selectedSegmentIndex = 0
-    }
-
-    @objc
-    private func segmentedValueChanged(_ sender: UISegmentedControl) {
-        print("Selected Segment Index is : \(sender.selectedSegmentIndex)")
+            .disposed(by: disposeBag)
     }
 
     @available(*, unavailable)

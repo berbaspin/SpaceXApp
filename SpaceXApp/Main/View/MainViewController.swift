@@ -5,9 +5,9 @@
 //  Created by Dmitry Babaev on 01.06.2022.
 //
 
-import UIKit
 import RxCocoa
 import RxSwift
+import UIKit
 
 final class MainViewController: UIPageViewController {
 
@@ -45,8 +45,7 @@ final class MainViewController: UIPageViewController {
                     .map { index, rocketViewModel in
                         RocketViewController(
                             viewModel: rocketViewModel,
-                            pageIndex: index,
-                            image: UIImage(named: "rocket")
+                            pageIndex: index
                         )
                     }
             }
@@ -75,11 +74,9 @@ extension MainViewController: UIPageViewControllerDataSource {
         }
 
         var index = currentViewController.pageIndex
-
         if index == 0 {
             return nil
         }
-
         index -= 1
 
         return rocketViewControllers[index]
@@ -94,11 +91,9 @@ extension MainViewController: UIPageViewControllerDataSource {
         }
 
         var index = currentViewController.pageIndex
-
         if index >= rocketViewControllers.count - 1 {
             return nil
         }
-
         index += 1
 
         return rocketViewControllers[index]

@@ -5,12 +5,13 @@
 //  Created by Dmitry Babaev on 14.06.2022.
 //
 
-import RxSwift
 import Moya
+import RxSwift
 
 protocol NetworkManagerProtocol {
     func getRockets() -> Single<[Rocket]>
-    func getLaunches() -> Single<[LaunchWrapped]>
+    func getLaunches() -> Single<[Launch]>
+    func getImage(urlString: String) -> Single<Image>
 }
 
 final class NetworkManager: NetworkManagerProtocol {
@@ -30,11 +31,18 @@ final class NetworkManager: NetworkManagerProtocol {
             .map([Rocket].self, using: decoder)
     }
 
-    func getLaunches() -> Single<[LaunchWrapped]> {
+    func getLaunches() -> Single<[Launch]> {
         provider
             .rx
             .request(.getLaunches)
             .filterSuccessfulStatusCodes()
-            .map([LaunchWrapped].self, using: decoder)
+            .map([Launch].self, using: decoder)
+    }
+
+    func getImage(urlString: String) -> Single<Image> {
+        provider
+            .rx
+            .request(.getImage(urlString: urlString))
+            .mapImage()
     }
 }

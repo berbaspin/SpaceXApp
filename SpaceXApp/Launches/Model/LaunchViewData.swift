@@ -7,18 +7,18 @@
 
 import Foundation
 
-struct Launch {
+struct LaunchViewData {
     let name: String
     let date: String
     let result: Bool
 
-    init(launch: LaunchWrapped) {
-        self.name = launch.name
+    init(launch: Launch) {
+        name = launch.name
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM, yyyy"
-        self.date = dateFormatter.string(
-            from: Date(timeIntervalSince1970: Double(launch.staticFireDateUnix ?? 415_637_900))
+        date = dateFormatter.string(
+            from: Date(timeIntervalSince1970: Double(launch.staticFireDateUnix ?? 15_627_600))
         )
-        self.result = launch.success ?? false
+        result = launch.success ?? false
     }
 }

@@ -5,9 +5,9 @@
 //  Created by Dmitry Babaev on 08.06.2022.
 //
 
-import UIKit
 import RxCocoa
 import RxSwift
+import UIKit
 
 final class RocketViewController: UIViewController {
 
@@ -33,24 +33,16 @@ final class RocketViewController: UIViewController {
         case sectionHeader = "section-header-element-kind"
     }
 
-    private enum Section: String, CaseIterable {
-        case parameters
-        case information
-        case firstStage = "ПЕРВАЯ СТУПЕНЬ"
-        case secondStage = "ВТОРАЯ СТУПЕНЬ"
-    }
-
     private var dataSource: UICollectionViewDiffableDataSource<Section, RocketCellModel>! = nil
-    private let sections = Section.allCases
-    private let viewModel: RocketViewModel
+    private let viewModel: RocketViewModelProtocol
     private let disposeBag = DisposeBag()
     let pageIndex: Int
 
-    init(viewModel: RocketViewModel, pageIndex: Int, image: UIImage?) {
+    init(viewModel: RocketViewModel, pageIndex: Int) {
         self.viewModel = viewModel
         self.pageIndex = pageIndex
-        rocketImage.image = image
         super.init(nibName: nil, bundle: nil)
+        viewModel.setData()
     }
 
     @available(*, unavailable)
@@ -62,8 +54,17 @@ final class RocketViewController: UIViewController {
         super.viewDidLoad()
         setHierarchy()
         setLayout()
+        bind()
         setupCollectionView()
         createDataSource()
+    }
+
+    private func bind() {
+        viewModel.imageDataSource
+            .asObservable()
+            .bind(to: rocketImage.rx.image)
+            .disposed(by: disposeBag)
+
     }
 
     private func setupCollectionView() {
@@ -116,11 +117,20 @@ private extension RocketViewController {
 
 private extension RocketViewController {
     func createDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, RocketCellModel>(
-            collectionView: collectionView) { collectionView, indexPath, cellData -> UICollectionViewCell? in
+        dataSource = createCollectionViewDiffableDataSource()
+        dataSource.supplementaryViewProvider = createCollectionViewSupplementaryViewProvider()
 
-                // TODO(make shorter)
-                switch self.sections[indexPath.section] {
+        let snapshot = snapshotForCurrentState()
+        dataSource.apply(snapshot)
+    }
+
+    private func createCollectionViewDiffableDataSource() ->
+    UICollectionViewDiffableDataSource<Section, RocketCellModel> {
+        UICollectionViewDiffableDataSource<Section, RocketCellModel>(
+            collectionView: collectionView) { collectionView, indexPath, cellData -> UICollectionViewCell? in
+                let section = self.viewModel.dataSource[indexPath.section]
+                // TODO: make shorter
+                switch section.type {
                 case .parameters:
                     let cell = collectionView.dequeueCell(
                         type: ParametersCell.self, for: indexPath
@@ -143,10 +153,11 @@ private extension RocketViewController {
                     return cell
                 }
         }
+    }
 
-        dataSource.supplementaryViewProvider = {(collectionView: UICollectionView, kind: String, indexPath: IndexPath
-            ) -> UICollectionReusableView? in
-            // TODO (make shorter)
+    func createCollectionViewSupplementaryViewProvider() ->
+    ((UICollectionView, String, IndexPath) -> UICollectionReusableView?) {
+        { collectionView, kind, indexPath -> UICollectionReusableView? in
             switch kind {
             case Syplementary.globalHeader.rawValue:
                 let supplementaryView = collectionView.dequeueReusableSupplementaryView(
@@ -154,16 +165,7 @@ private extension RocketViewController {
                     withReuseIdentifier: String(describing: HeaderView.self),
                     for: indexPath
                 ) as? HeaderView
-                supplementaryView?.setup(with: self.viewModel.rocket.name)
-
-                supplementaryView?.settingsButton.rx
-                    .tap
-                    .bind { [weak self] in
-                        print("Нажал settingsButton")
-                        self?.viewModel.tapOnSettings()
-                        // self?.showSettingsVC()
-                    }
-                    .disposed(by: self.disposeBag)
+                supplementaryView?.setup(with: self.viewModel.name, buttonAction: self.viewModel.tapOnSettings)
                 return supplementaryView
             case Syplementary.globalFooter.rawValue:
                 let supplementaryView = collectionView.dequeueReusableSupplementaryView(
@@ -171,15 +173,7 @@ private extension RocketViewController {
                     withReuseIdentifier: String(describing: FooterView.self),
                     for: indexPath
                 ) as? FooterView
-
-                supplementaryView?.launchesButton.rx
-                    .tap
-                    .bind { [weak self] in
-                        print("Нажал launchesButton")
-                        self?.viewModel.tapOnLaunches()
-                    }
-                    .disposed(by: self.disposeBag)
-
+                supplementaryView?.setup(buttonAction: self.viewModel.tapOnLaunches)
                 return supplementaryView
             default:
                 let supplementaryView = collectionView.dequeueReusableSupplementaryView(
@@ -187,26 +181,16 @@ private extension RocketViewController {
                     withReuseIdentifier: String(describing: SectionHeaderView.self),
                     for: indexPath
                 ) as? SectionHeaderView
-                supplementaryView?.setup(with: Section.allCases[indexPath.section].rawValue)
+                supplementaryView?.setup(with: self.viewModel.dataSource[indexPath.section].type.rawValue)
                 return supplementaryView
             }
         }
-
-        let snapshot = snapshotForCurrentState()
-        dataSource.apply(snapshot)
     }
 
-    private func showSettingsVC() {
-        let settingsViewController = AssemblyBuilder().createSettingsModule()
-        let navController = UINavigationController(rootViewController: settingsViewController)
-        navController.modalPresentationStyle = .automatic
-        present(navController, animated: true)
-    }
     func createCompositionalLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, _ in
-            let section = self.sections[sectionIndex]
-
-            switch section {
+            let section = self.viewModel.dataSource[sectionIndex]
+            switch section.type {
             case .parameters:
                 return self.createParametersSection()
             case .information:
@@ -247,32 +231,13 @@ private extension RocketViewController {
 
     private func snapshotForCurrentState() -> NSDiffableDataSourceSnapshot<Section, RocketCellModel> {
         var snapshot = NSDiffableDataSourceSnapshot<Section, RocketCellModel>()
+        let sections = viewModel.dataSource
         snapshot.appendSections(sections)
 
-        // TODO(change data getting)
-        let parameters = [
-            RocketCellModel(title: "Высота, ft", value: "229.6", measuringSystem: "ft"),
-            RocketCellModel(title: "Диаметр, ft", value: "39.9", measuringSystem: "ft"),
-            RocketCellModel(title: "Масса, lb", value: "3,125,735", measuringSystem: "lb"),
-            RocketCellModel(title: "Нагрузка, lb", value: "140,660", measuringSystem: "lb")
-        ]
-
-        let information = [
-            RocketCellModel(title: "Первый запуск", value: "7 февраля, 2018", measuringSystem: ""),
-            RocketCellModel(title: "Страна", value: "США", measuringSystem: ""),
-            RocketCellModel(title: "Стоимость запуска", value: "$90 млн", measuringSystem: "$")
-        ]
-
-        // let firstStage = viewModel.getFirstStage()
-        let secondStage = viewModel.getSecondStage()
-
-        snapshot.appendItems(parameters, toSection: Section.parameters)
-        snapshot.appendItems(information, toSection: Section.information)
-        // snapshot.appendItems(firstStage, toSection: Section.firstStage)
-        snapshot.appendItems(secondStage, toSection: Section.secondStage)
-
+        sections.forEach { snapshot.appendItems($0.cellModels, toSection: $0) }
         return snapshot
     }
+
 }
 
 // MARK: - UICollectionView Sections

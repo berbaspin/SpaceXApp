@@ -10,7 +10,7 @@ import RxCocoa
 import RxSwift
 
 protocol LaunchesViewModelProtocol {
-    var dataSourse: Driver<[Launch]> { get }
+    var dataSourse: Driver<[LaunchViewData]> { get }
     var rocketName: String { get }
 }
 
@@ -18,7 +18,7 @@ final class LaunchesViewModel: LaunchesViewModelProtocol {
 
     private let networkManager: NetworkManagerProtocol
 
-    let dataSourse: Driver<[Launch]>
+    let dataSourse: Driver<[LaunchViewData]>
     let rocketName: String
 
     init(rocketName: String, rocketId: String, networkManager: NetworkManagerProtocol) {
@@ -26,9 +26,9 @@ final class LaunchesViewModel: LaunchesViewModelProtocol {
         self.rocketName = rocketName
 
         dataSourse = networkManager.getLaunches()
-            .map { launches -> [Launch] in
+            .map { launches -> [LaunchViewData] in
                 launches.filter { $0.rocket == rocketId }
-                    .map { Launch(launch: $0) }
+                    .map { LaunchViewData(launch: $0) }
             }
             .asDriver(onErrorDriveWith: .never())
     }

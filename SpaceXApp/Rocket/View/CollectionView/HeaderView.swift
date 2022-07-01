@@ -5,6 +5,8 @@
 //  Created by Dmitry Babaev on 01.06.2022.
 //
 
+import RxCocoa
+import RxSwift
 import UIKit
 
 final class HeaderView: UICollectionReusableView {
@@ -27,7 +29,7 @@ final class HeaderView: UICollectionReusableView {
         return label
     }()
 
-    let settingsButton: UIButton = {
+    private let settingsButton: UIButton = {
         let button = UIButton(type: .system)
 
         let image = UIImage(
@@ -42,6 +44,8 @@ final class HeaderView: UICollectionReusableView {
         return button
     }()
 
+    private var disposeBag = DisposeBag()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         layer.cornerRadius = 25
@@ -50,8 +54,19 @@ final class HeaderView: UICollectionReusableView {
         setLayout()
     }
 
-    func setup(with title: String) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+    }
+
+    func setup(with title: String, buttonAction: @escaping () -> Void) {
         titleLabel.text = title
+        settingsButton.rx
+            .tap
+            .bind {
+                buttonAction()
+            }
+            .disposed(by: self.disposeBag)
     }
 
     @available(*, unavailable)

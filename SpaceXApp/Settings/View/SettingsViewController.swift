@@ -5,9 +5,9 @@
 //  Created by Dmitry Babaev on 30.05.2022.
 //
 
-import UIKit
 import RxCocoa
 import RxSwift
+import UIKit
 
 final class SettingsViewController: UIViewController {
 
@@ -17,7 +17,6 @@ final class SettingsViewController: UIViewController {
         return tableView
     }()
 
-    private let settings = Setting.availableSettings()
     private let disposeBag = DisposeBag()
 
     // swiftlint:disable:next implicitly_unwrapped_optional
@@ -43,7 +42,7 @@ final class SettingsViewController: UIViewController {
                     cellType: SettingsTableViewCell.self
                 )
             ) { _, model, cell in
-                cell.setup(text: model.type, items: model.units)
+                cell.setup(text: model.type.rawValue, items: model.units)
             }
             .disposed(by: disposeBag)
     }
@@ -56,7 +55,7 @@ private extension SettingsViewController {
     func setupNavigationBar() {
         navigationController?.navigationBar.barStyle = .black
         navigationController?.navigationBar.tintColor = .white
-        navigationController?.navigationBar.topItem?.title = "Настройки"
+        navigationController?.navigationBar.topItem?.title = "Settings"
         let doneItem = UIBarButtonItem(
             barButtonSystemItem: .done,
             target: self,
@@ -73,7 +72,6 @@ private extension SettingsViewController {
 
     @objc
     func closeViewController() {
-        // navigationController?.popViewController(animated: true)
         dismiss(animated: true)
     }
 }
