@@ -19,7 +19,7 @@ final class FooterView: UICollectionReusableView {
         config.baseBackgroundColor = UIColor(named: "DarkGray")
         button.configuration = config
         let mySelectedAttributedTitle = NSAttributedString(
-            string: "Посмотреть запуски",
+            string: "Check launches".localized(),
             attributes: [.font: UIFont.boldSystemFont(ofSize: 18)]
         )
         button.setAttributedTitle(mySelectedAttributedTitle, for: .normal)

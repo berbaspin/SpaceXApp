@@ -16,10 +16,23 @@ struct Section: Hashable {
 // MARK: SectionType
 
 extension Section {
-    enum SectionType: String {
+    enum SectionType {
         case parameters
         case information
-        case firstStage = "FIRST STAGE"
-        case secondStage = "SECOND STAGE"
+        case firstStage
+        case secondStage
+
+        var name: String {
+            switch self {
+            case .parameters:
+                return "Parameters".localized().uppercased()
+            case .information:
+                return "Information".localized().uppercased()
+            case .firstStage:
+                return "First stage".localized().uppercased()
+            case .secondStage:
+                return "Second stage".localized().uppercased()
+            }
+        }
     }
 }

@@ -1,0 +1,23 @@
+/* 
+  Localizable.strings
+  SpaceXApp
+
+  Created by Dmitry Babaev on 18.07.2022.
+  
+*/
+
+"Country" = "Страна";
+"First launch" = "Первый запуск";
+"Launch cost" = "Стоимость запуска";
+"Number of engines" = "Количество двигателей";
+"Fuel amount" = "Количество топлива";
+"Burn time" = "Время сгорания";
+"Height" = "Высота";
+"Diameter" = "Диаметр";
+"Mass" = "Масса";
+"Payload" = "Нагрузка";
+"First stage" = "Первая ступень";
+"Second stage" = "Вторая ступень";
+"Parameters" = "Параметры";
+"Information" = "Информация";
+"Check launches" = "Посмотреть запуски";

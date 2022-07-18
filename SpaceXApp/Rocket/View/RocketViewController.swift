@@ -181,7 +181,7 @@ private extension RocketViewController {
                     withReuseIdentifier: String(describing: SectionHeaderView.self),
                     for: indexPath
                 ) as? SectionHeaderView
-                supplementaryView?.setup(with: self.viewModel.dataSource[indexPath.section].type.rawValue)
+                supplementaryView?.setup(with: self.viewModel.dataSource[indexPath.section].type.name)
                 return supplementaryView
             }
         }

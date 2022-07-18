@@ -46,7 +46,7 @@ final class SettingsViewController: UIViewController {
                     cellType: SettingsTableViewCell.self
                 )
             ) { index, model, cell in
-                cell.setup(tag: index, text: model.type.rawValue, items: model.units, isUs: model.isUS)
+                cell.setup(tag: index, text: model.type.name, items: model.units, isUs: model.isUS)
                 cell.changedSegmentedControl
                     .bind { [unowned self] index, isUs in
                         guard var newSettings = try? self.viewModel.dataSource.value(),

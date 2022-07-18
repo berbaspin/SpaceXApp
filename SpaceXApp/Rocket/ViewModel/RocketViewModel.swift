@@ -57,22 +57,22 @@ final class RocketViewModel: RocketViewModelProtocol {
                 cellModels:
                     [
                         RocketCellModel(
-                            title: "Высота, \(measureType(setting: settings[0]))",
+                            title: "\(settings[0].type.name), \(measureType(setting: settings[0]))",
                             value: settings[0].isUS ? rocket.height.feet : rocket.height.meters,
                             measuringSystem: "\(measureType(setting: settings[0]))"
                         ),
                         RocketCellModel(
-                            title: "Диаметр, \(measureType(setting: settings[1]))",
+                            title: "\(settings[1].type.name), \(measureType(setting: settings[1]))",
                             value: settings[1].isUS ? rocket.diameter.feet: rocket.diameter.meters,
                             measuringSystem: "\(measureType(setting: settings[1]))"
                         ),
                         RocketCellModel(
-                            title: "Масса, \(measureType(setting: settings[2]))",
+                            title: "\(settings[2].type.name), \(measureType(setting: settings[2]))",
                             value: settings[2].isUS ? rocket.mass.pound : rocket.mass.kilogram,
                             measuringSystem: "\(measureType(setting: settings[2]))"
                         ),
                         RocketCellModel(
-                            title: "Нагрузка, \(measureType(setting: settings[3]))",
+                            title: "\(settings[3].type.name), \(measureType(setting: settings[3]))",
                             value: settings[3].isUS ? rocket.payloadWeights.pound : rocket.payloadWeights.kilogram,
                             measuringSystem: "\(measureType(setting: settings[3]))"
                         )
@@ -83,17 +83,17 @@ final class RocketViewModel: RocketViewModelProtocol {
                 cellModels:
                     [
                         RocketCellModel(
-                            title: "Первый запуск",
+                            title: "First launch".localized(),
                             value: rocket.firstFlight,
                             measuringSystem: ""
                         ),
                         RocketCellModel(
-                            title: "Страна",
+                            title: "Country".localized(),
                             value: rocket.country,
                             measuringSystem: ""
                         ),
                         RocketCellModel(
-                            title: "Стоимость запуска",
+                            title: "Launch cost".localized(),
                             value: rocket.costPerLaunch,
                             measuringSystem: "$"
                         )
@@ -104,17 +104,17 @@ final class RocketViewModel: RocketViewModelProtocol {
                 cellModels:
                     [
                         RocketCellModel(
-                            title: "Количество двигателей",
+                            title: "Number of engines".localized(),
                             value: "\(rocket.firstStage.engines)",
                             measuringSystem: ""
                         ),
                         RocketCellModel(
-                            title: "Количество топлива",
+                            title: "Fuel amount".localized(),
                             value: "\(rocket.firstStage.fuelAmountTons)",
                             measuringSystem: "ton"
                         ),
                         RocketCellModel(
-                            title: "Время сгорания",
+                            title: "Burn time".localized(),
                             value: "\(rocket.firstStage.burnTimeSEC ?? 0)",
                             measuringSystem: "sec"
                         )
@@ -125,17 +125,17 @@ final class RocketViewModel: RocketViewModelProtocol {
                 cellModels:
                     [
                         RocketCellModel(
-                            title: "Количество двигателей",
+                            title: "Number of engines".localized(),
                             value: "\(rocket.secondStage.engines)",
                             measuringSystem: ""
                         ),
                         RocketCellModel(
-                            title: "Количество топлива",
+                            title: "Fuel amount".localized(),
                             value: "\(rocket.secondStage.fuelAmountTons)",
                             measuringSystem: "ton"
                         ),
                         RocketCellModel(
-                            title: "Время сгорания",
+                            title: "Burn time".localized(),
                             value: "\(rocket.secondStage.burnTimeSEC ?? 0)",
                             measuringSystem: "sec"
                         )

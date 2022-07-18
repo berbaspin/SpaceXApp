@@ -14,11 +14,24 @@ struct Setting: Codable, Equatable {
 }
 
 extension Setting {
-    enum SettingsType: String, Codable {
-        case height = "Height"
-        case diameter = "Diameter"
-        case mass = "Mass"
-        case payloadWeights = "Payload weights"
+    enum SettingsType: Codable {
+        case height
+        case diameter
+        case mass
+        case payloadWeights
+
+        var name: String {
+            switch self {
+            case .height:
+                return "Height".localized()
+            case .diameter:
+                return "Diameter".localized()
+            case .mass:
+                return "Mass".localized()
+            case .payloadWeights:
+                return "Payload".localized()
+            }
+        }
     }
 
     enum Units: String, Codable {
