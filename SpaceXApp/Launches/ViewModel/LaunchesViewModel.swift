@@ -5,7 +5,6 @@
 //  Created by Dmitry Babaev on 31.05.2022.
 //
 
-import Foundation
 import RxCocoa
 import RxSwift
 
@@ -43,5 +42,4 @@ final class LaunchesViewModel: LaunchesViewModelProtocol {
             }
             .asDriver(onErrorDriveWith: .never())
     }
-
 }

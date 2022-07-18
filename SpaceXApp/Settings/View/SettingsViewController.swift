@@ -65,7 +65,6 @@ final class SettingsViewController: UIViewController {
 // MARK: - Setup Methods
 
 private extension SettingsViewController {
-
     func setupNavigationBar() {
         navigationController?.navigationBar.barStyle = .black
         navigationController?.navigationBar.tintColor = .white

@@ -60,7 +60,6 @@ final class LaunchesViewController: UIViewController {
 // MARK: - Setup Layout
 
 private extension LaunchesViewController {
-
     func setHierachy() {
         view.addSubview(tableView)
     }
@@ -73,5 +72,4 @@ private extension LaunchesViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-
 }

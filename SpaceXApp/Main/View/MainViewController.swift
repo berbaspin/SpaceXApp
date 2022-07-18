@@ -32,8 +32,12 @@ final class MainViewController: UIPageViewController {
         }
         bind()
     }
+}
 
-    private func bind() {
+// MARK: Data binding
+
+private extension MainViewController {
+    func bind() {
         viewModel.dataSourse
             .map { rockets -> [RocketViewController] in
                 rockets
@@ -91,6 +95,8 @@ extension MainViewController: UIPageViewControllerDataSource {
         currentIndex
     }
 }
+
+// MARK: - UIPageViewControllerDelegate
 
 extension MainViewController: UIPageViewControllerDelegate {
     func pageViewController(

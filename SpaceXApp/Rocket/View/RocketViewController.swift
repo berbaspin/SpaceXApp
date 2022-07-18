@@ -67,8 +67,12 @@ final class RocketViewController: UIViewController {
             .disposed(by: disposeBag)
 
     }
+}
 
-    private func setupCollectionView() {
+// MARK: - Setup Methods
+
+private extension RocketViewController {
+    func setupCollectionView() {
         collectionView.collectionViewLayout = createCompositionalLayout()
         collectionView.registerCell(type: ParametersCell.self)
         collectionView.registerCell(type: InformationCell.self)
