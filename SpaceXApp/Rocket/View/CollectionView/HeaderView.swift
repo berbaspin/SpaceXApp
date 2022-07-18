@@ -81,8 +81,7 @@ private extension HeaderView {
     func setHierarchy() {
         addSubview(stackView)
 
-        stackView.addArrangedSubview(titleLabel)
-        stackView.addArrangedSubview(settingsButton)
+        [titleLabel, settingsButton].forEach(stackView.addArrangedSubview)
     }
 
     func setLayout() {

@@ -32,17 +32,31 @@ final class SettingsViewController: UIViewController {
         view.backgroundColor = .black
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        viewModel.closeViewController()
+    }
+
     private func bind() {
         viewModel.dataSource
             .bind(
-                to: tableView
-                    .rx
+                to: tableView.rx
                     .items(
                     cellIdentifier: String(describing: SettingsTableViewCell.self),
                     cellType: SettingsTableViewCell.self
                 )
-            ) { _, model, cell in
-                cell.setup(text: model.type.rawValue, items: model.units)
+            ) { index, model, cell in
+                cell.setup(tag: index, text: model.type.rawValue, items: model.units, isUs: model.isUS)
+                cell.changedSegmentedControl
+                    .bind { [unowned self] index, isUs in
+                        guard var newSettings = try? self.viewModel.dataSource.value(),
+                        newSettings.count > index else {
+                            return
+                        }
+                        newSettings[index].isUS = isUs
+                        self.viewModel.dataSource.onNext(newSettings)
+                    }
+                    .disposed(by: self.disposeBag)
             }
             .disposed(by: disposeBag)
     }

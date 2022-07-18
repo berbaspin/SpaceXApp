@@ -9,8 +9,9 @@ import UIKit
 
 protocol RouterProtocol {
     func initializeViewController()
-    func showSettings()
+    func showSettings(settings: [Setting])
     func showLaunches(rocketName: String, rocketId: String)
+    func showMainModule(settings: [Setting])
 }
 
 final class Router: RouterProtocol {
@@ -28,8 +29,8 @@ final class Router: RouterProtocol {
         navigationController.viewControllers = [mainViewController]
     }
 
-    func showSettings() {
-        let settingsViewController = assemblyBuilder.createSettingsModule()
+    func showSettings(settings: [Setting]) {
+        let settingsViewController = assemblyBuilder.createSettingsModule(settings: settings, router: self)
         let settingNavigationController = UINavigationController(rootViewController: settingsViewController)
         settingNavigationController.modalPresentationStyle = .automatic
         navigationController.topViewController?.present(settingNavigationController, animated: true)
@@ -42,5 +43,13 @@ final class Router: RouterProtocol {
             router: self
         )
         navigationController.pushViewController(launchesViewController, animated: true)
+    }
+
+    func showMainModule(settings: [Setting]) {
+        guard let mainViewController = navigationController.topViewController as? MainViewController else {
+            return
+        }
+        mainViewController.viewModel.updateSettings(settings: settings)
+        mainViewController.viewWillAppear(true)
     }
 }

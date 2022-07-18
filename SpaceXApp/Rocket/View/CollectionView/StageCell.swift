@@ -66,9 +66,7 @@ private extension StageCell {
     func setHierarchy() {
         contentView.addSubview(stackView)
 
-        stackView.addArrangedSubview(titleLabel)
-        stackView.addArrangedSubview(valueLabel)
-        stackView.addArrangedSubview(measuringSystemLabel)
+        [titleLabel, valueLabel, measuringSystemLabel].forEach(stackView.addArrangedSubview)
     }
 
     func setLayout() {

@@ -35,8 +35,7 @@ final class LaunchesViewController: UIViewController {
 
         viewModel.dataSourse
             .drive(
-                tableView
-                    .rx
+                tableView.rx
                     .items(
                         cellIdentifier: String(describing: LaunchesTableViewCell.self),
                         cellType: LaunchesTableViewCell.self

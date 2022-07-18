@@ -8,9 +8,8 @@
 import UIKit
 
 extension UITableView {
-    func registerCell(type: UITableViewCell.Type, identifier: String? = nil) {
-        let cellId = String(describing: type)
-        register(type, forCellReuseIdentifier: identifier ?? cellId)
+    func registerCell<T: UITableViewCell>(type: T.Type, identifier: String = String(describing: T.self)) {
+        register(type, forCellReuseIdentifier: identifier)
     }
 
     func dequeueCell<T: UITableViewCell>(type: UITableViewCell.Type, for indexPath: IndexPath) -> T? {

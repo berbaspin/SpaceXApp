@@ -8,9 +8,8 @@
 import UIKit
 
 extension UICollectionView {
-    func registerCell(type: UICollectionViewCell.Type, identifier: String? = nil) {
-        let cellId = String(describing: type)
-        register(type, forCellWithReuseIdentifier: identifier ?? cellId)
+    func registerCell<T: UICollectionViewCell>(type: T.Type, identifier: String = String(describing: T.self)) {
+        register(type, forCellWithReuseIdentifier: identifier)
     }
 
     func dequeueCell<T: UICollectionViewCell>(type: UICollectionViewCell.Type, for indexPath: IndexPath) -> T? {

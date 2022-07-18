@@ -11,9 +11,6 @@ import UIKit
 
 final class SettingsTableViewCell: UITableViewCell {
 
-    // TODO: add UserDefaults to segmentedControl
-    // TODO: add segmentedContol functionality
-
     private let stack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -47,6 +44,8 @@ final class SettingsTableViewCell: UITableViewCell {
     }()
 
     private let disposeBag = DisposeBag()
+    let isUs = PublishSubject<Bool>()
+    let changedSegmentedControl = PublishSubject<(Int, Bool)>()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -54,6 +53,7 @@ final class SettingsTableViewCell: UITableViewCell {
         selectionStyle = .none
         setHierarchy()
         setLayout()
+        setupSegmentedControl()
     }
 
     override func prepareForReuse() {
@@ -61,17 +61,25 @@ final class SettingsTableViewCell: UITableViewCell {
         segmentedControl.removeAllSegments()
     }
 
-    func setup(text: String, items: [Setting.Units]) {
+    func setup(tag: Int, text: String, items: [Setting.Units], isUs: Bool) {
         label.text = text
         for index in 0 ..< items.count {
             segmentedControl.insertSegment(withTitle: items[index].rawValue, at: index, animated: false)
         }
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl
-            .rx
+        segmentedControl.tag = tag
+        segmentedControl.selectedSegmentIndex = isUs ? 1 : 0
+    }
+
+    private func setupSegmentedControl() {
+        segmentedControl.rx
             .selectedSegmentIndex
-            .subscribe(onNext: { index in
-                print(index)
+            .subscribe(onNext: { [weak self] index in
+                guard let self = self else {
+                    return
+                }
+                self.isUs.onNext(index == 1)
+                self.changedSegmentedControl.onNext((self.segmentedControl.tag, index == 1))
+
             })
             .disposed(by: disposeBag)
     }

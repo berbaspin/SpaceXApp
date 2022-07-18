@@ -9,12 +9,24 @@ import Foundation
 import RxSwift
 
 protocol SettingsViewModelProtocol {
-    var dataSource: Observable<[Setting]> { get }
-
+    var dataSource: BehaviorSubject<[Setting]> { get }
+    func closeViewController()
 }
 
 final class SettingsViewModel: SettingsViewModelProtocol {
-    let dataSource = Observable.of(Setting.availableSettings())
 
-    init() {}
+    private let router: RouterProtocol
+    let dataSource: BehaviorSubject<[Setting]>
+
+    init(settings: [Setting], router: RouterProtocol) {
+        self.router = router
+        dataSource = BehaviorSubject(value: settings)
+    }
+
+    func closeViewController() {
+        guard let settings = try? dataSource.value() else {
+            return
+        }
+        router.showMainModule(settings: settings)
+    }
 }

@@ -7,9 +7,11 @@
 
 import Foundation
 
-struct Launch: Codable {
+// MARK: - Launch
+struct Launch: Decodable {
     let name: String
-    let staticFireDateUnix: Int?
+    let staticFireDateUnix: Date?
+    // swiftlint:disable:next discouraged_optional_boolean
     let success: Bool?
     let rocket: String
 }

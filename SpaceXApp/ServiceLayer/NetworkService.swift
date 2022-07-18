@@ -15,7 +15,7 @@ enum NetworkService {
 
 extension NetworkService: TargetType {
 
-    // FIXME: Force unwrapping
+    // swiftlint:disable all
     var baseURL: URL {
         switch self {
         case .getRockets:

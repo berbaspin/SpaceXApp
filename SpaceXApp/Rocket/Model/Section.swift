@@ -7,23 +7,10 @@
 
 import Foundation
 
-final class Section: Hashable {
+struct Section: Hashable {
     let id = UUID()
     let type: SectionType
     let cellModels: [RocketCellModel]
-
-    init(type: SectionType, cellModels: [RocketCellModel]) {
-        self.type = type
-        self.cellModels = cellModels
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
-    static func == (lhs: Section, rhs: Section) -> Bool {
-        lhs.id == rhs.id
-    }
 }
 
 // MARK: SectionType

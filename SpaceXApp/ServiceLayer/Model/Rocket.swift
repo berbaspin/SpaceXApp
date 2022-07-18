@@ -7,65 +7,33 @@
 
 import Foundation
 
-
-// TODO: Remove unused properties
-
 // MARK: - Rocket
-struct Rocket: Codable {
-    let height, diameter: Diameter //
-    let mass: Mass //
-    let firstStage: FirstStage //
-    let secondStage: SecondStage //
-    let engines: Engines
-    let landingLegs: LandingLegs
+struct Rocket: Decodable {
+    let height, diameter: Diameter
+    let mass: Mass
+    let firstStage: FirstStage
+    let secondStage: SecondStage
     let payloadWeights: [PayloadWeight]
     let flickrImages: [String]
-    let name, type: String //
-    let active: Bool
-    let stages, boosters, costPerLaunch, successRatePct: Int // costPerLaunch
-    let firstFlight, country, company: String // firstFlight, country
-    // let wikipedia: String
-    let description, id: String // id
+    let name: String
+    let type: String
+    let costPerLaunch: Int
+    let firstFlight: Date
+    let country: String
+    let id: String
 }
 
 extension Rocket {
     // MARK: - Diameter
-    struct Diameter: Codable {
-        let meters, feet: Double?
-    }
-
-    // MARK: - Engines
-    struct Engines: Codable {
-        let isp: ISP
-        let number: Int
-        let type, version: String
-        let layout: String?
-        let engineLossMax: Int?
-        let propellant1, propellant2: String
-        let thrustToWeight: Double
-    }
-
-    // MARK: - ISP
-    struct ISP: Codable {
-        let seaLevel, vacuum: Int
-    }
-
-    // MARK: - FirstStage
-    struct FirstStage: Codable {
-        let engines: Int
-        let fuelAmountTons: Double
-        let burnTimeSEC: Int?
-    }
-
-    // MARK: - LandingLegs
-    struct LandingLegs: Codable {
-        let number: Int
-        let material: String?
+    struct Diameter: Decodable {
+        let meters: Double?
+        let feet: Double?
     }
 
     // MARK: - Mass
-    struct Mass: Codable {
-        let kilogram, pound: Int
+    struct Mass: Decodable {
+        let kilogram: Int
+        let pound: Int
 
         enum CodingKeys: String, CodingKey {
             case kilogram = "kg"
@@ -74,9 +42,11 @@ extension Rocket {
     }
 
     // MARK: - PayloadWeight
-    struct PayloadWeight: Codable {
-        let id, name: String
-        let kilogram, pound: Int
+    struct PayloadWeight: Decodable {
+        let id: String
+        let name: String
+        let kilogram: Int
+        let pound: Int
 
         enum CodingKeys: String, CodingKey {
             case id
@@ -84,19 +54,25 @@ extension Rocket {
             case kilogram = "kg"
             case pound = "lb"
         }
+    }
 
+    // MARK: - FirstStage
+    struct FirstStage: Decodable {
+        let engines: Int
+        let fuelAmountTons: Double
+        let burnTimeSEC: Int?
     }
 
     // MARK: - SecondStage
-    struct SecondStage: Codable {
+    struct SecondStage: Decodable {
         let engines: Int
         let fuelAmountTons: Double
         let burnTimeSEC: Int?
     }
 
     // MARK: - CompositeFairing
-    struct CompositeFairing: Codable {
-        let height, diameter: Diameter
+    struct CompositeFairing: Decodable {
+        let height: Diameter
+        let diameter: Diameter
     }
-
 }

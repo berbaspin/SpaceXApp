@@ -21,18 +21,24 @@ protocol RocketViewModelProtocol {
 final class RocketViewModel: RocketViewModelProtocol {
 
     private let rocket: RocketViewData
-    let imageDataSource: Driver<Image>
-    let name: String
     private let networkManager: NetworkManagerProtocol
     private let router: RouterProtocol
+    private var settings: [Setting]
+    private let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM, yyyy"
+        return dateFormatter
+    }()
 
-    // let dataSource = BehaviorRelay<[Section]>(value: [])
+    let imageDataSource: Driver<Image>
+    let name: String
+
+    var isSettingsChanged = false
     var dataSource = [Section]()
 
-    private let firstStage: PublishSubject<[RocketCellModel]> = PublishSubject()
-
-    init(rocket: Rocket, networkManager: NetworkManagerProtocol, router: RouterProtocol) {
-        self.rocket = RocketViewData(rocket: rocket)
+    init(rocket: RocketViewData, settings: [Setting], networkManager: NetworkManagerProtocol, router: RouterProtocol) {
+        self.rocket = rocket
+        self.settings = settings
         self.networkManager = networkManager
         self.router = router
         name = rocket.name
@@ -42,30 +48,33 @@ final class RocketViewModel: RocketViewModelProtocol {
     }
 
     func setData() {
-        dataSource += [
+        guard settings.count == 4 else {
+            return
+        }
+        dataSource = [
             Section(
                 type: .parameters,
                 cellModels:
                     [
                         RocketCellModel(
-                            title: "Высота, ft",
-                            value: rocket.height.feet,
-                            measuringSystem: "ft"
+                            title: "Высота, \(measureType(setting: settings[0]))",
+                            value: settings[0].isUS ? rocket.height.feet : rocket.height.meters,
+                            measuringSystem: "\(measureType(setting: settings[0]))"
                         ),
                         RocketCellModel(
-                            title: "Диаметр, ft",
-                            value: rocket.diameter.feet,
-                            measuringSystem: "ft"
+                            title: "Диаметр, \(measureType(setting: settings[1]))",
+                            value: settings[1].isUS ? rocket.diameter.feet: rocket.diameter.meters,
+                            measuringSystem: "\(measureType(setting: settings[1]))"
                         ),
                         RocketCellModel(
-                            title: "Масса, lb",
-                            value: rocket.mass.pound,
-                            measuringSystem: "lb"
+                            title: "Масса, \(measureType(setting: settings[2]))",
+                            value: settings[2].isUS ? rocket.mass.pound : rocket.mass.kilogram,
+                            measuringSystem: "\(measureType(setting: settings[2]))"
                         ),
                         RocketCellModel(
-                            title: "Нагрузка, lb",
-                            value: rocket.payloadWeights.pound,
-                            measuringSystem: "lb"
+                            title: "Нагрузка, \(measureType(setting: settings[3]))",
+                            value: settings[3].isUS ? rocket.payloadWeights.pound : rocket.payloadWeights.kilogram,
+                            measuringSystem: "\(measureType(setting: settings[3]))"
                         )
                     ]
             ),
@@ -135,8 +144,12 @@ final class RocketViewModel: RocketViewModelProtocol {
         ]
     }
 
+    private func measureType(setting: Setting) -> String {
+        setting.isUS ? setting.units[1].rawValue : setting.units[0].rawValue
+    }
+
     func tapOnSettings() {
-        router.showSettings()
+        router.showSettings(settings: settings)
     }
 
     func tapOnLaunches() {

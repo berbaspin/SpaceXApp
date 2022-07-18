@@ -49,12 +49,17 @@ final class LaunchesTableViewCell: UITableViewCell {
         return imageView
     }()
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .black
         selectionStyle = .none
         setHierarchy()
         setLayout()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     func setup(name: String, date: String, image: UIImage?) {

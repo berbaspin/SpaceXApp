@@ -33,6 +33,7 @@ final class RocketViewController: UIViewController {
         case sectionHeader = "section-header-element-kind"
     }
 
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var dataSource: UICollectionViewDiffableDataSource<Section, RocketCellModel>! = nil
     private let viewModel: RocketViewModelProtocol
     private let disposeBag = DisposeBag()
@@ -94,8 +95,7 @@ final class RocketViewController: UIViewController {
 
 private extension RocketViewController {
     func setHierarchy() {
-        view.addSubview(rocketImage)
-        view.addSubview(collectionView)
+        [rocketImage, collectionView].forEach(view.addSubview)
     }
 
     func setLayout() {

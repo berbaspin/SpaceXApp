@@ -7,7 +7,11 @@
 
 import UIKit
 
-final class ParametersCell: UICollectionViewCell {
+protocol RocketsCollectionViewCellProtocol {
+    func setup(with parameters: RocketCellModel)
+}
+
+final class ParametersCell: UICollectionViewCell, RocketsCollectionViewCellProtocol {
 
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -61,14 +65,16 @@ private extension ParametersCell {
     func setHierarchy() {
         contentView.addSubview(stackView)
 
-        stackView.addArrangedSubview(paramenterValueLabel)
-        stackView.addArrangedSubview(paramenterNameLabel)
+        [paramenterValueLabel, paramenterNameLabel].forEach(stackView.addArrangedSubview)
     }
 
     func setLayout() {
+
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            stackView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1 / 2),
+            stackView.widthAnchor.constraint(equalTo: contentView.widthAnchor)
         ])
     }
 }

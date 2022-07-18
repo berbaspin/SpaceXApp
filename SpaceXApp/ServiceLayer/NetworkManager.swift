@@ -16,32 +16,36 @@ protocol NetworkManagerProtocol {
 
 final class NetworkManager: NetworkManagerProtocol {
 
+    // TODO: Change for unit tests
     private let provider = MoyaProvider<NetworkService>()
-    private let decoder = JSONDecoder()
+    private let decoder: JSONDecoder
+    private let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter
+    }()
 
-    init() {
+    init(decoder: JSONDecoder) {
+        self.decoder = decoder
         decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
     func getRockets() -> Single<[Rocket]> {
-        provider
-            .rx
+        provider.rx
             .request(.getRockets)
             .filterSuccessfulStatusCodes()
             .map([Rocket].self, using: decoder)
     }
 
     func getLaunches() -> Single<[Launch]> {
-        provider
-            .rx
+        provider.rx
             .request(.getLaunches)
             .filterSuccessfulStatusCodes()
             .map([Launch].self, using: decoder)
     }
 
     func getImage(urlString: String) -> Single<Image> {
-        provider
-            .rx
+        provider.rx
             .request(.getImage(urlString: urlString))
             .mapImage()
     }

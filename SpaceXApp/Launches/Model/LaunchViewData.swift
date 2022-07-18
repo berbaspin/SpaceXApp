@@ -12,13 +12,9 @@ struct LaunchViewData {
     let date: String
     let result: Bool
 
-    init(launch: Launch) {
-        name = launch.name
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MMMM, yyyy"
-        date = dateFormatter.string(
-            from: Date(timeIntervalSince1970: Double(launch.staticFireDateUnix ?? 15_627_600))
-        )
-        result = launch.success ?? false
+    init(name: String, date: String, result: Bool) {
+        self.name = name
+        self.date = date
+        self.result = result
     }
 }

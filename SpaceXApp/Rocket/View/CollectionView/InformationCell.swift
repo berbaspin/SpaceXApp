@@ -56,8 +56,7 @@ private extension InformationCell {
     func setHierarchy() {
         contentView.addSubview(stackView)
 
-        stackView.addArrangedSubview(titleLabel)
-        stackView.addArrangedSubview(valueLabel)
+        [titleLabel, valueLabel].forEach(stackView.addArrangedSubview)
     }
 
     func setLayout() {

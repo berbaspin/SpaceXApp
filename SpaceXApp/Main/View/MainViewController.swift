@@ -17,23 +17,19 @@ final class MainViewController: UIPageViewController {
     // swiftlint:disable:next implicitly_unwrapped_optional
     var viewModel: MainViewModelProtocol!
 
-    override init(
-        transitionStyle style: UIPageViewController.TransitionStyle,
-        navigationOrientation: UIPageViewController.NavigationOrientation,
-        options: [UIPageViewController.OptionsKey : Any]? = nil
-    ) {
-        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         dataSource = self
+        delegate = self
         view.backgroundColor = .black
+        viewModel.getData()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard viewModel.isSettingsChanged else {
+            return
+        }
         bind()
     }
 
@@ -49,14 +45,14 @@ final class MainViewController: UIPageViewController {
                         )
                     }
             }
-            .asObservable()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] viewControllers in
-                self?.rocketViewControllers = viewControllers
-                guard let initialVC = self?.rocketViewControllers.first else {
+            .drive(onNext: { [weak self] viewControllers in
+                guard let self = self,
+                viewControllers.count > self.currentIndex - 1 else {
                     return
                 }
-                self?.setViewControllers([initialVC], direction: .forward, animated: true)
+                self.rocketViewControllers = viewControllers
+                let initialVC = self.rocketViewControllers[self.currentIndex]
+                self.setViewControllers([initialVC], direction: .forward, animated: false)
             })
             .disposed(by: disposeBag)
     }
@@ -69,34 +65,22 @@ extension MainViewController: UIPageViewControllerDataSource {
         _ pageViewController: UIPageViewController,
         viewControllerBefore viewController: UIViewController
     ) -> UIViewController? {
-        guard let currentViewController = viewController as? RocketViewController else {
+        guard let currentViewController = viewController as? RocketViewController,
+            currentViewController.pageIndex != 0 else {
             return nil
         }
-
-        var index = currentViewController.pageIndex
-        if index == 0 {
-            return nil
-        }
-        index -= 1
-
-        return rocketViewControllers[index]
+        return rocketViewControllers[currentViewController.pageIndex - 1]
     }
 
     func pageViewController(
         _ pageViewController: UIPageViewController,
         viewControllerAfter viewController: UIViewController
     ) -> UIViewController? {
-        guard let currentViewController = viewController as? RocketViewController else {
+        guard let currentViewController = viewController as? RocketViewController,
+            currentViewController.pageIndex < rocketViewControllers.count - 1 else {
             return nil
         }
-
-        var index = currentViewController.pageIndex
-        if index >= rocketViewControllers.count - 1 {
-            return nil
-        }
-        index += 1
-
-        return rocketViewControllers[index]
+        return rocketViewControllers[currentViewController.pageIndex + 1]
     }
 
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
@@ -105,5 +89,20 @@ extension MainViewController: UIPageViewControllerDataSource {
 
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
         currentIndex
+    }
+}
+
+extension MainViewController: UIPageViewControllerDelegate {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        didFinishAnimating finished: Bool,
+        previousViewControllers: [UIViewController],
+        transitionCompleted completed: Bool
+    ) {
+        guard completed,
+            let currentVC = pageViewController.viewControllers?.first as? RocketViewController else {
+            return
+        }
+        currentIndex = currentVC.pageIndex
     }
 }

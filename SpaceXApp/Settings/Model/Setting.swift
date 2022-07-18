@@ -7,21 +7,21 @@
 
 import Foundation
 
-struct Setting {
+struct Setting: Codable, Equatable {
     let type: SettingsType
     let units: [Units]
-    let isUS: Bool
+    var isUS: Bool
 }
 
 extension Setting {
-    enum SettingsType: String {
+    enum SettingsType: String, Codable {
         case height = "Height"
         case diameter = "Diameter"
         case mass = "Mass"
         case payloadWeights = "Payload weights"
     }
 
-    enum Units: String {
+    enum Units: String, Codable {
         case meters = "m"
         case feet = "ft"
         case kilogram = "kg"
