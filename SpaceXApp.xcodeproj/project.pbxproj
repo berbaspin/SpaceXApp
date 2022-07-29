@@ -35,6 +35,7 @@
 		133604BB283F70480021722F /* SpaceXAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133604BA283F70480021722F /* SpaceXAppTests.swift */; };
 		137689CC28854086003CF8A4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 137689CE28854086003CF8A4 /* Localizable.strings */; };
 		137689D028854111003CF8A4 /* String+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 137689CF28854111003CF8A4 /* String+Localization.swift */; };
+		137689D328940CBB003CF8A4 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 137689D228940CBB003CF8A4 /* README.md */; };
 		13798593283F7D1500D59E3A /* Rocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13798592283F7D1400D59E3A /* Rocket.swift */; };
 		13808F2D2853C34900E874A9 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13808F2C2853C34900E874A9 /* Colors.xcassets */; };
 		139FC0BB2861CF2700CC4912 /* Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 139FC0BA2861CF2700CC4912 /* Launch.swift */; };
@@ -99,6 +100,7 @@
 		137689C928853FF6003CF8A4 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		137689CD28854086003CF8A4 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		137689CF28854111003CF8A4 /* String+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Localization.swift"; sourceTree = "<group>"; };
+		137689D228940CBB003CF8A4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		13798592283F7D1400D59E3A /* Rocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rocket.swift; sourceTree = "<group>"; };
 		13808F2C2853C34900E874A9 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		139FC0BA2861CF2700CC4912 /* Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Launch.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 		13360497283F70450021722F = {
 			isa = PBXGroup;
 			children = (
+				137689D228940CBB003CF8A4 /* README.md */,
 				133604A2283F70460021722F /* SpaceXApp */,
 				133604B9283F70480021722F /* SpaceXAppTests */,
 				133604A1283F70460021722F /* Products */,
@@ -518,6 +521,7 @@
 			files = (
 				133604B0283F70480021722F /* LaunchScreen.storyboard in Resources */,
 				137689CC28854086003CF8A4 /* Localizable.strings in Resources */,
+				137689D328940CBB003CF8A4 /* README.md in Resources */,
 				13808F2D2853C34900E874A9 /* Colors.xcassets in Resources */,
 				133604AD283F70480021722F /* Assets.xcassets in Resources */,
 			);
