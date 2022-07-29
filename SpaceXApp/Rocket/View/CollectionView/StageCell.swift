@@ -48,15 +48,15 @@ final class StageCell: UICollectionViewCell {
         setLayout()
     }
 
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     func setup(with cellModel: RocketCellModel) {
         titleLabel.text = cellModel.title
         valueLabel.text = cellModel.value
         measuringSystemLabel.text = cellModel.measuringSystem
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

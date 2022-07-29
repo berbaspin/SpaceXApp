@@ -6,27 +6,56 @@
 //
 
 import Foundation
+import RxCocoa
 import RxSwift
 
 protocol SettingsViewModelProtocol {
-    var dataSource: BehaviorSubject<[Setting]> { get }
+    var dataSource: Driver<[Setting]> { get }
+    func updateSettings(setting: Setting, isUS: Bool)
     func closeViewController()
 }
 
 final class SettingsViewModel: SettingsViewModelProtocol {
 
     private let router: RouterProtocol
-    let dataSource: BehaviorSubject<[Setting]>
+    private let decoder = PropertyListDecoder()
+    private let encoder = PropertyListEncoder()
+    private let settingsKey = "availableSettings"
+    private var settings: [Setting] {
+        get {
+            guard let savedData = UserDefaults.standard.object(forKey: settingsKey) as? Data,
+                let decodedSettings = try? decoder.decode([Setting].self, from: savedData) else {
+                return Setting.availableSettings()
+            }
+            return decodedSettings
+        }
+        set {
+            UserDefaults.standard.set(try? encoder.encode(newValue), forKey: settingsKey)
+        }
+    }
+    private var isSettingsChanged = false
 
-    init(settings: [Setting], router: RouterProtocol) {
+    var dataSource: Driver<[Setting]> {
+        Observable.just(settings).asDriver(onErrorDriveWith: .never())
+    }
+
+    init(router: RouterProtocol) {
         self.router = router
-        dataSource = BehaviorSubject(value: settings)
+    }
+
+    func updateSettings(setting: Setting, isUS: Bool) {
+        for index in 0 ... settings.count - 1 {
+            if settings[index].type == setting.type, settings[index].isUS != isUS {
+                isSettingsChanged = true
+                settings[index].isUS = isUS
+            }
+        }
     }
 
     func closeViewController() {
-        guard let settings = try? dataSource.value() else {
+        guard isSettingsChanged else {
             return
         }
-        router.showMainModule(settings: settings)
+        router.showMainModule()
     }
 }

@@ -9,8 +9,8 @@ import UIKit
 
 protocol AssemblyBuilderProtocol {
     func createMainModule(router: RouterProtocol) -> UIViewController
-    func createSettingsModule(settings: [Setting], router: RouterProtocol) -> UIViewController
-    func createLaunchesModule(rocketName: String, rocketId: String, router: RouterProtocol) -> UIViewController
+    func createSettingsModule(router: RouterProtocol) -> UIViewController
+    func createLaunchesModule(rocketName: String, rocketId: String) -> UIViewController
 }
 
 final class AssemblyBuilder: AssemblyBuilderProtocol {
@@ -28,14 +28,14 @@ final class AssemblyBuilder: AssemblyBuilderProtocol {
         return mainViewController
     }
 
-    func createSettingsModule(settings: [Setting], router: RouterProtocol) -> UIViewController {
+    func createSettingsModule(router: RouterProtocol) -> UIViewController {
         let settingsViewController = SettingsViewController()
-        let viewModel = SettingsViewModel(settings: settings, router: router)
+        let viewModel = SettingsViewModel(router: router)
         settingsViewController.viewModel = viewModel
         return settingsViewController
     }
 
-    func createLaunchesModule(rocketName: String, rocketId: String, router: RouterProtocol) -> UIViewController {
+    func createLaunchesModule(rocketName: String, rocketId: String) -> UIViewController {
         let launchesViewController = LaunchesViewController()
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970

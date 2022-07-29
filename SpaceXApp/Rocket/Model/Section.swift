@@ -8,7 +8,7 @@
 import Foundation
 
 struct Section: Hashable {
-    let id = UUID()
+    // let id = UUID()
     let type: SectionType
     let cellModels: [RocketCellModel]
 }

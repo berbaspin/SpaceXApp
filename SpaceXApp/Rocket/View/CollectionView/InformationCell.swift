@@ -39,14 +39,14 @@ final class InformationCell: UICollectionViewCell {
         setLayout()
     }
 
-    func setup(with cellModel: RocketCellModel) {
-        titleLabel.text = cellModel.title
-        valueLabel.text = cellModel.value
-    }
-
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func setup(with cellModel: RocketCellModel) {
+        titleLabel.text = cellModel.title
+        valueLabel.text = cellModel.value
     }
 }
 

@@ -23,13 +23,13 @@ final class SectionHeaderView: UICollectionReusableView {
         setLayout()
     }
 
-    func setup(with title: String) {
-        label.text = title
-    }
-
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func setup(with title: String) {
+        label.text = title
     }
 }
 

@@ -23,13 +23,6 @@ final class MainViewController: UIPageViewController {
         delegate = self
         view.backgroundColor = .black
         viewModel.getData()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        guard viewModel.isSettingsChanged else {
-            return
-        }
         bind()
     }
 }
@@ -38,7 +31,8 @@ final class MainViewController: UIPageViewController {
 
 private extension MainViewController {
     func bind() {
-        viewModel.dataSourse
+        // swiftlint:disable:next trailing_closure
+        viewModel.dataSource
             .map { rockets -> [RocketViewController] in
                 rockets
                     .enumerated()
@@ -50,8 +44,7 @@ private extension MainViewController {
                     }
             }
             .drive(onNext: { [weak self] viewControllers in
-                guard let self = self,
-                viewControllers.count > self.currentIndex - 1 else {
+                guard let self = self else {
                     return
                 }
                 self.rocketViewControllers = viewControllers

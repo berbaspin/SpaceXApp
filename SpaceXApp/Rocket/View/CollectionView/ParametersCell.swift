@@ -7,11 +7,7 @@
 
 import UIKit
 
-protocol RocketsCollectionViewCellProtocol {
-    func setup(with parameters: RocketCellModel)
-}
-
-final class ParametersCell: UICollectionViewCell, RocketsCollectionViewCellProtocol {
+final class ParametersCell: UICollectionViewCell {
 
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -48,14 +44,14 @@ final class ParametersCell: UICollectionViewCell, RocketsCollectionViewCellProto
         setLayout()
     }
 
-    func setup(with parameters: RocketCellModel) {
-        paramenterNameLabel.text = parameters.title
-        paramenterValueLabel.text = parameters.value
-    }
-
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func setup(with parameters: RocketCellModel) {
+        paramenterNameLabel.text = parameters.title
+        paramenterValueLabel.text = parameters.value
     }
 }
 

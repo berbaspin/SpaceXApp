@@ -7,7 +7,6 @@
 
 import Foundation
 
-// MARK: - Rocket
 struct Rocket: Decodable {
     let height, diameter: Diameter
     let mass: Mass

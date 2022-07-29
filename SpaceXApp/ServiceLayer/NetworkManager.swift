@@ -16,17 +16,12 @@ protocol NetworkManagerProtocol {
 
 final class NetworkManager: NetworkManagerProtocol {
 
-    // TODO: Change for unit tests
-    private let provider = MoyaProvider<NetworkService>()
+    private let provider: MoyaProvider<NetworkService>
     private let decoder: JSONDecoder
-    private let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter
-    }()
 
-    init(decoder: JSONDecoder) {
+    init(decoder: JSONDecoder, provider: MoyaProvider<NetworkService> = .init()) {
         self.decoder = decoder
+        self.provider = provider
         decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 

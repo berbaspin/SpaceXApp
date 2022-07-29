@@ -7,6 +7,7 @@
 
 import RxCocoa
 import RxSwift
+import UIKit.UIImage
 
 protocol LaunchesViewModelProtocol {
     var dataSourse: Driver<[LaunchViewData]> { get }
@@ -33,11 +34,12 @@ final class LaunchesViewModel: LaunchesViewModelProtocol {
         dataSourse = networkManager.getLaunches()
             .map { launches -> [LaunchViewData] in
                 launches.filter { $0.rocket == rocketId }
-                    .map { LaunchViewData(
-                        name: $0.name,
-                        date: dateFormatter.string(from: $0.staticFireDateUnix ?? Date(timeIntervalSince1970: 0)),
-                        result: $0.success ?? false
-                    )
+                    .map {
+                        LaunchViewData(
+                            name: $0.name,
+                            date: dateFormatter.string(from: $0.staticFireDateUnix ?? Date(timeIntervalSince1970: 0)),
+                            image: $0.success ?? false ? UIImage(named: "success") : UIImage(named: "failure")
+                        )
                     }
             }
             .asDriver(onErrorDriveWith: .never())

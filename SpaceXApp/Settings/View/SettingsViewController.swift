@@ -38,24 +38,24 @@ final class SettingsViewController: UIViewController {
     }
 
     private func bind() {
+
         viewModel.dataSource
-            .bind(
-                to: tableView.rx
+            .drive(
+                tableView.rx
                     .items(
-                    cellIdentifier: String(describing: SettingsTableViewCell.self),
-                    cellType: SettingsTableViewCell.self
-                )
-            ) { index, model, cell in
-                cell.setup(tag: index, text: model.type.name, items: model.units, isUs: model.isUS)
-                cell.changedSegmentedControl
-                    .bind { [unowned self] index, isUs in
-                        guard var newSettings = try? self.viewModel.dataSource.value(),
-                        newSettings.count > index else {
+                        cellIdentifier: String(describing: SettingsTableViewCell.self),
+                        cellType: SettingsTableViewCell.self
+                    )
+            ) { _, model, cell in
+                cell.setup(model: model)
+                // swiftlint:disable:next trailing_closure
+                cell.isSegmentedControlChanged
+                    .subscribe(onNext: { [weak self] isUS in
+                        guard let self = self else {
                             return
                         }
-                        newSettings[index].isUS = isUs
-                        self.viewModel.dataSource.onNext(newSettings)
-                    }
+                        self.viewModel.updateSettings(setting: model, isUS: isUS)
+                    })
                     .disposed(by: self.disposeBag)
             }
             .disposed(by: disposeBag)

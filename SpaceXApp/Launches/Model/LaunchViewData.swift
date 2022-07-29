@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import UIKit.UIImage
 
 struct LaunchViewData {
     let name: String
     let date: String
-    let result: Bool
+    let image: UIImage?
 }

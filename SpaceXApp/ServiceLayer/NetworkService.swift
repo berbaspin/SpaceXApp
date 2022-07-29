@@ -15,14 +15,16 @@ enum NetworkService {
 
 extension NetworkService: TargetType {
 
-    // swiftlint:disable all
     var baseURL: URL {
         switch self {
         case .getRockets:
+            // swiftlint:disable:next force_unwrapping
             return URL(string: "https://api.spacexdata.com")!
         case .getLaunches:
+            // swiftlint:disable:next force_unwrapping
             return URL(string: "https://api.spacexdata.com")!
         case .getImage(urlString: let urlString):
+            // swiftlint:disable:next force_unwrapping
             return URL(string: urlString)!
         }
     }
@@ -50,6 +52,7 @@ extension NetworkService: TargetType {
         .requestPlain
     }
 
+    // swiftlint:disable:next discouraged_optional_collection
     var headers: [String: String]? {
         ["Content-Type": "application/json"]
     }

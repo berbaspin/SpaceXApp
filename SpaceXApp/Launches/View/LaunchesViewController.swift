@@ -11,8 +11,6 @@ import UIKit
 
 final class LaunchesViewController: UIViewController {
 
-    // swiftlint:disable:next implicitly_unwrapped_optional
-    var viewModel: LaunchesViewModelProtocol!
     private let disposeBag = DisposeBag()
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -20,6 +18,8 @@ final class LaunchesViewController: UIViewController {
         tableView.backgroundColor = .black
         return tableView
     }()
+    // swiftlint:disable:next implicitly_unwrapped_optional
+    var viewModel: LaunchesViewModelProtocol!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,11 +41,7 @@ final class LaunchesViewController: UIViewController {
                         cellType: LaunchesTableViewCell.self
                     )
             ) { _, model, cell in
-                if model.result {
-                    cell.setup(name: model.name, date: model.date, image: UIImage(named: "success"))
-                } else {
-                    cell.setup(name: model.name, date: model.date, image: UIImage(named: "failure"))
-                }
+                cell.setup(model: model)
             }
             .disposed(by: disposeBag)
     }

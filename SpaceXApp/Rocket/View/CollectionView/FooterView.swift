@@ -50,9 +50,7 @@ final class FooterView: UICollectionReusableView {
     func setup(buttonAction: @escaping () -> Void) {
         launchesButton.rx
             .tap
-            .bind {
-                buttonAction()
-            }
+            .bind(onNext: buttonAction)
             .disposed(by: disposeBag)
     }
 }

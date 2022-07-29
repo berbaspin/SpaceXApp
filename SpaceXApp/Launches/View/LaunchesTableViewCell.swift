@@ -62,10 +62,10 @@ final class LaunchesTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup(name: String, date: String, image: UIImage?) {
-        titleLabel.text = name
-        dateLabel.text = date
-        statusImage.image = image
+    func setup(model: LaunchViewData) {
+        titleLabel.text = model.name
+        dateLabel.text = model.date
+        statusImage.image = model.image
     }
 }
 

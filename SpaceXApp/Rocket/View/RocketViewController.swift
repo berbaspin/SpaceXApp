@@ -11,6 +11,8 @@ import UIKit
 
 final class RocketViewController: UIViewController {
 
+    typealias DataSourceType = UICollectionViewDiffableDataSource<Section, RocketCellModel>
+
     private let rocketImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -27,14 +29,14 @@ final class RocketViewController: UIViewController {
         return collection
     }()
 
-    private enum Syplementary: String, CaseIterable {
-        case globalHeader = "global-header-element-kind"
-        case globalFooter = "global-footer-element-kind"
-        case sectionHeader = "section-header-element-kind"
+    private enum Supplementary: String, CaseIterable {
+        case globalHeader
+        case globalFooter
+        case sectionHeader
     }
 
     // swiftlint:disable:next implicitly_unwrapped_optional
-    private var dataSource: UICollectionViewDiffableDataSource<Section, RocketCellModel>! = nil
+    private var dataSource: DataSourceType!
     private let viewModel: RocketViewModelProtocol
     private let disposeBag = DisposeBag()
     let pageIndex: Int
@@ -62,10 +64,8 @@ final class RocketViewController: UIViewController {
 
     private func bind() {
         viewModel.imageDataSource
-            .asObservable()
-            .bind(to: rocketImage.rx.image)
+            .drive(rocketImage.rx.image)
             .disposed(by: disposeBag)
-
     }
 }
 
@@ -79,17 +79,17 @@ private extension RocketViewController {
         collectionView.registerCell(type: StageCell.self)
         collectionView.register(
             SectionHeaderView.self,
-            forSupplementaryViewOfKind: Syplementary.sectionHeader.rawValue,
+            forSupplementaryViewOfKind: Supplementary.sectionHeader.rawValue,
             withReuseIdentifier: String(describing: SectionHeaderView.self)
         )
         collectionView.register(
             HeaderView.self,
-            forSupplementaryViewOfKind: Syplementary.globalHeader.rawValue,
+            forSupplementaryViewOfKind: Supplementary.globalHeader.rawValue,
             withReuseIdentifier: String(describing: HeaderView.self)
         )
         collectionView.register(
             FooterView.self,
-            forSupplementaryViewOfKind: Syplementary.globalFooter.rawValue,
+            forSupplementaryViewOfKind: Supplementary.globalFooter.rawValue,
             withReuseIdentifier: String(describing: FooterView.self)
         )
     }
@@ -128,42 +128,48 @@ private extension RocketViewController {
         dataSource.apply(snapshot)
     }
 
-    private func createCollectionViewDiffableDataSource() ->
-    UICollectionViewDiffableDataSource<Section, RocketCellModel> {
-        UICollectionViewDiffableDataSource<Section, RocketCellModel>(
-            collectionView: collectionView) { collectionView, indexPath, cellData -> UICollectionViewCell? in
-                let section = self.viewModel.dataSource[indexPath.section]
-                // TODO: make shorter
-                switch section.type {
-                case .parameters:
-                    let cell = collectionView.dequeueCell(
-                        type: ParametersCell.self, for: indexPath
-                    ) as? ParametersCell
-                    cell?.setup(with: cellData)
-                    return cell
-                case .information:
-                    let cell = collectionView.dequeueCell(
-                        type: InformationCell.self, for: indexPath
-                    ) as? InformationCell
-                    cell?.setup(with: cellData)
-                    return cell
-                case .firstStage:
-                    let cell = collectionView.dequeueCell(type: StageCell.self, for: indexPath) as? StageCell
-                    cell?.setup(with: cellData)
-                    return cell
-                case .secondStage:
-                    let cell = collectionView.dequeueCell(type: StageCell.self, for: indexPath) as? StageCell
-                    cell?.setup(with: cellData)
-                    return cell
-                }
+    private func createCollectionViewDiffableDataSource() -> DataSourceType {
+        DataSourceType(
+            collectionView: collectionView
+            // swiftlint:disable:next closure_body_length
+        ) { [weak self] collectionView, indexPath, cellData -> UICollectionViewCell? in
+            guard let self = self else {
+                return nil
+            }
+            let section = self.viewModel.dataSource[indexPath.section]
+            switch section.type {
+            case .parameters:
+                let cell = collectionView.dequeueCell(
+                    type: ParametersCell.self, for: indexPath
+                ) as? ParametersCell
+                cell?.setup(with: cellData)
+                return cell
+            case .information:
+                let cell = collectionView.dequeueCell(
+                    type: InformationCell.self, for: indexPath
+                ) as? InformationCell
+                cell?.setup(with: cellData)
+                return cell
+            case .firstStage:
+                let cell = collectionView.dequeueCell(type: StageCell.self, for: indexPath) as? StageCell
+                cell?.setup(with: cellData)
+                return cell
+            case .secondStage:
+                let cell = collectionView.dequeueCell(type: StageCell.self, for: indexPath) as? StageCell
+                cell?.setup(with: cellData)
+                return cell
+            }
         }
     }
 
-    func createCollectionViewSupplementaryViewProvider() ->
-    ((UICollectionView, String, IndexPath) -> UICollectionReusableView?) {
-        { collectionView, kind, indexPath -> UICollectionReusableView? in
-            switch kind {
-            case Syplementary.globalHeader.rawValue:
+    func createCollectionViewSupplementaryViewProvider() -> DataSourceType.SupplementaryViewProvider {
+        // swiftlint:disable:next closure_body_length
+        { [weak self] collectionView, kind, indexPath -> UICollectionReusableView? in
+            guard let self = self else {
+                return nil
+            }
+            switch Supplementary(rawValue: kind) ?? .sectionHeader {
+            case .globalHeader:
                 let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: String(describing: HeaderView.self),
@@ -171,7 +177,7 @@ private extension RocketViewController {
                 ) as? HeaderView
                 supplementaryView?.setup(with: self.viewModel.name, buttonAction: self.viewModel.tapOnSettings)
                 return supplementaryView
-            case Syplementary.globalFooter.rawValue:
+            case .globalFooter:
                 let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: String(describing: FooterView.self),
@@ -179,7 +185,7 @@ private extension RocketViewController {
                 ) as? FooterView
                 supplementaryView?.setup(buttonAction: self.viewModel.tapOnLaunches)
                 return supplementaryView
-            default:
+            case .sectionHeader:
                 let supplementaryView = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: String(describing: SectionHeaderView.self),
@@ -212,7 +218,7 @@ private extension RocketViewController {
         )
         let globalHeader = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: globalHeaderSize,
-            elementKind: Syplementary.globalHeader.rawValue,
+            elementKind: Supplementary.globalHeader.rawValue,
             alignment: .top
         )
 
@@ -222,7 +228,7 @@ private extension RocketViewController {
         )
         let globalFooter = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: globalFooterSize,
-            elementKind: Syplementary.globalFooter.rawValue,
+            elementKind: Supplementary.globalFooter.rawValue,
             alignment: .bottom
         )
 
@@ -306,7 +312,7 @@ private extension RocketViewController {
         )
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerSize,
-            elementKind: Syplementary.sectionHeader.rawValue,
+            elementKind: Supplementary.sectionHeader.rawValue,
             alignment: .top
         )
 
