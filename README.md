@@ -1,47 +1,63 @@
 #  CountriesApp
 
 ## App Previews ##
-<img src="https://github.com/berbaspin/SpaceXApp/blob/main/SpaceXApp/Resources/Assets.xcassets/CountriesList.imageset/CountriesList.png" width="200">   <img src="https://github.com/berbaspin/CountriesApp/blob/main/CountriesApp/Resources/Assets.xcassets/CountryDetails.imageset/CountryDetails.png" width="200">
+<img src="https://github.com/berbaspin/SpaceXApp/blob/main/SpaceXApp/Resources/Assets.xcassets/Main.imageset/Main.png" width="200">   <img src="https://github.com/berbaspin/SpaceXApp/blob/main/SpaceXApp/Resources/Assets.xcassets/Launches.imageset/Launches.png" width="200">   <img src="https://github.com/berbaspin/SpaceXApp/blob/main/SpaceXApp/Resources/Assets.xcassets/Settings.imageset/Settings.png" width="200">
 
 ## Requirements ##
 
 
 ### Build an iOS app ###
-The application is a list of countries and their detailed description.
-The data is loaded page by page and located in JSON files pageN.json, where N is a page number.
-Start with
-[ page1.json ]( https://rawgit.com/NikitaAsabin/799e4502c9fc3e0ea7af439b2dfd88fa/raw/7f5c6c66358501f72fada21e04d75f64474a7888/page1.json ) . The URL to the next page is located in the JSON file in the "next" parameter. 
-
-The detailed design with assets is in the sketch [file](https://drive.google.com/file/d/1DwzFVFKsgTbrduPskJuDuWkQ_kggk9jO/view?usp=sharing)
-
-The list of loaded countries should be saved locally. In the absence of an Internet connection, cached data should be display.
+The application shows information about SpaceX rockets and a list of their launches.
+API links: [ rockets ]( https://api.spacexdata.com/v4/rockets ), [ launches ]( https://api.spacexdata.com/v4/launches )
 
 #### Screens: ####
 
-**List of countries**
+**Rockets**
 
- * The screen must match the attached [ design ]( https://invis.io/BKDKMH76Q#/254298088_Countries_List )
- * Automatic loading of countries (pagination)
- * Dynamic cell size
- * Ability to update the list of countries (pull to refresh)
+This is the start screen of the application.
+Since there are several rockets, we suggest using the Page Control as navigation between them.
+At the top of the screen is a random image of a space rocket and its name.
+The next horizontal block is an information that indicates the name of the parameter, value and unit of measure:
+* height
+* diameter
+* weight
+* payload for id "leo" (Low Earth Orbit)
+Then the following information needs to be displayed vertically:
+* date of first launch
+* country
+* launch cost
+* first stage - number of engines
+* first stage - the amount of fuel in tons
+* first stage - combustion time in seconds
+* second stage - number of engines
+* second stage - amount of fuel in tons
+* second stage - combustion time in seconds
+At the bottom of the screen, a "Show launches" button is shown, clicking on this button takes you to the next screen.
  
-**Detailed information about the country**
+**Launches**
 
- * The screen must match the attached [ design ]( https://invis.io/BKDKMH76Q#/254298087_Country_Page ). 
- * If there is no photo - display the flag of the selected country
+ A table that displays the name of the space rocket and a list of its launches.
+For each rocket launch we show:
+* launch name
+* date
+* icon of successful/unsuccessful launch
 
-> *Photos in the JSON file are located by the key image or in countryInfo:{images: [] }*
+**Settings**
 
+Provide a button opposite the name of the rocket on the screen 1, when pressed, we present the Settings modally.
+This screen allows to select units of measurement for the following parameters:
+ height
+* diameter
+* weight
+* payload
+After closing the Settings screen, the selected units of measurement should be applied to the corresponding parameters on the main screen with the list of missiles.
+Implement saving user settings and apply them on subsequent launches of the application
 
 ## Workflow ##
 
-* Use Swift
-* Your choice of architecture (MVC, MVP, MVVM, Viper)
-* Storyboard or XIBs
-* Networking
-* Store local data
+* RxSwift
+* MVVM
+* Auto Layout Programmatically
+* Networking (Moya)
+* UserDefaults
 * Follow Gitflow
-* Store local data with Realm or Core Data
-* Unit tests
-* UI tests
-* **Do not** use third party frameworks for image loading
