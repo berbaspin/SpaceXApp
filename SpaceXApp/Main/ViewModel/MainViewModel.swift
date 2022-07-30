@@ -36,16 +36,11 @@ final class MainViewModel: MainViewModelProtocol {
     private let encoder = PropertyListEncoder()
     private let settingsKey = "availableSettings"
     private var settings: [Setting] {
-        get {
-            guard let savedData = UserDefaults.standard.object(forKey: settingsKey) as? Data,
-                let decodedSettings = try? decoder.decode([Setting].self, from: savedData) else {
-                return Setting.availableSettings()
-            }
-            return decodedSettings
+        guard let savedData = UserDefaults.standard.object(forKey: settingsKey) as? Data,
+            let decodedSettings = try? decoder.decode([Setting].self, from: savedData) else {
+            return Setting.availableSettings()
         }
-        set {
-            UserDefaults.standard.set(try? encoder.encode(newValue), forKey: settingsKey)
-        }
+        return decodedSettings
     }
     var dataSource: Driver<[RocketViewModel]> {
         rockets.asDriver(onErrorDriveWith: .never())
