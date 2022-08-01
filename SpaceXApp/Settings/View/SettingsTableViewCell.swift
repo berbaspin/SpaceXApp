@@ -67,12 +67,19 @@ final class SettingsTableViewCell: UITableViewCell {
         disposeBag = DisposeBag()
     }
 
-    func setup(model: Setting) {
+    func setup(model: Setting, onUpdateSetting: @escaping (Bool) -> Void) {
         label.text = model.type.name
         for index in 0 ..< model.units.count {
             segmentedControl.insertSegment(withTitle: model.units[index].rawValue, at: index, animated: false)
         }
         segmentedControl.selectedSegmentIndex = model.isUS ? 1 : 0
+
+        // swiftlint:disable:next trailing_closure
+        isSegmentedControlChanged
+            .bind(onNext: { isUS in
+                onUpdateSetting(isUS)
+            })
+            .disposed(by: disposeBag)
     }
 }
 

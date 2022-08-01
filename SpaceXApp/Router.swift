@@ -8,10 +8,10 @@
 import UIKit
 
 protocol RouterProtocol {
-    func initializeViewController()
+    func initializeMainViewController()
     func showSettings(settings: [Setting])
     func showLaunches(rocketName: String, rocketId: String)
-    func showMainModule()
+    func refreshMainModule(isSettingsChanged: Bool)
 }
 
 final class Router: RouterProtocol {
@@ -24,7 +24,7 @@ final class Router: RouterProtocol {
         self.navigationController = navigationController
     }
 
-    func initializeViewController() {
+    func initializeMainViewController() {
         let mainViewController = assemblyBuilder.createMainModule(router: self)
         navigationController.viewControllers = [mainViewController]
     }
@@ -44,11 +44,11 @@ final class Router: RouterProtocol {
         navigationController.pushViewController(launchesViewController, animated: true)
     }
 
-    func showMainModule() {
-        guard let mainViewController = navigationController.topViewController as? MainViewController else {
+    func refreshMainModule(isSettingsChanged: Bool) {
+        guard let mainViewController = navigationController.topViewController as? MainViewController,
+            isSettingsChanged else {
             return
         }
         mainViewController.viewModel.getData()
-        mainViewController.viewWillAppear(true)
     }
 }

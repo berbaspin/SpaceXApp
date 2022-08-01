@@ -53,9 +53,6 @@ final class SettingsViewModel: SettingsViewModelProtocol {
     }
 
     func closeViewController() {
-        guard isSettingsChanged else {
-            return
-        }
-        router.showMainModule()
+        router.refreshMainModule(isSettingsChanged: isSettingsChanged)
     }
 }

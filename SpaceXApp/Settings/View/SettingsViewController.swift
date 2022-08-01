@@ -47,16 +47,12 @@ final class SettingsViewController: UIViewController {
                         cellType: SettingsTableViewCell.self
                     )
             ) { _, model, cell in
-                cell.setup(model: model)
-                // swiftlint:disable:next trailing_closure
-                cell.isSegmentedControlChanged
-                    .subscribe(onNext: { [weak self] isUS in
-                        guard let self = self else {
-                            return
-                        }
-                        self.viewModel.updateSettings(setting: model, isUS: isUS)
-                    })
-                    .disposed(by: self.disposeBag)
+                cell.setup(model: model) { [weak self] in
+                    guard let self = self else {
+                        return
+                    }
+                    self.viewModel.updateSettings(setting: model, isUS: $0)
+                }
             }
             .disposed(by: disposeBag)
     }

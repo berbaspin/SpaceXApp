@@ -27,7 +27,7 @@ final class MainViewController: UIPageViewController {
     }
 }
 
-// MARK: Data binding
+// MARK: - Data binding
 
 private extension MainViewController {
     func bind() {
