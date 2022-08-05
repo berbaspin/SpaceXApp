@@ -1,4 +1,4 @@
-#  CountriesApp
+#  SpaceXApp
 
 ## App Previews ##
 <img src="https://github.com/berbaspin/SpaceXApp/blob/main/SpaceXApp/Resources/Assets.xcassets/Main.imageset/Main.png" width="200">   <img src="https://github.com/berbaspin/SpaceXApp/blob/main/SpaceXApp/Resources/Assets.xcassets/Launches.imageset/Launches.png" width="200">   <img src="https://github.com/berbaspin/SpaceXApp/blob/main/SpaceXApp/Resources/Assets.xcassets/Settings.imageset/Settings.png" width="200">
